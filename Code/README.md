@@ -61,28 +61,6 @@ Startup.bat
 
 ---
 
-## 🔨 Building Executable
-
-### Prerequisites
-- Python 3.12 or 3.13
-- PyInstaller: `pip install pyinstaller`
-- Inno Setup: https://jrsoftware.org/isinfo.php
-
-### Build Steps
-
-**1. Build Executable:**
-```bash
-build.bat
-```
-This creates `dist\GarminChat.exe`
-
-**2. Create Installer:**
-- Open `installer.iss` in Inno Setup Compiler
-- Click Build → Compile
-- Installer created: `installer\GarminChatDesktop_Setup_v4.0.exe`
-
----
-
 ## 📋 Dependencies
 
 ```
@@ -139,25 +117,12 @@ MIT License - See LICENSE.txt
 
 ## 🔗 Links
 
-- GitHub: https://github.com/rod-trent/JunkDrawer
-- Issues: https://github.com/rod-trent/JunkDrawer/issues
+- GitHub: https://github.com/rod-trent/GarminChatDesktop
+- Issues: https://github.com/rod-trent/GarminChatDesktop/issues
 
 ---
 
 ## ⚙️ Technical Notes
-
-### PyInstaller Build
-The `.spec` file includes all necessary hidden imports for:
-- All 5 AI provider SDKs
-- Garmin Connect integration
-- Tkinter GUI components
-
-### Inno Setup Installer
-Creates a professional Windows installer with:
-- Start Menu shortcuts
-- Optional desktop icon
-- Automatic uninstaller
-- Post-install welcome message
 
 ### Configuration Storage
 All settings stored in: `%USERPROFILE%\.garmin_chat\config.json`
@@ -167,4 +132,4 @@ All settings stored in: `%USERPROFILE%\.garmin_chat\config.json`
 ## 🆘 Support
 
 For issues, questions, or feature requests:
-https://github.com/rod-trent/JunkDrawer/issues
+https://github.com/rod-trent/GarminChatDesktop/issues
