@@ -11,7 +11,7 @@ Official release packages for Garmin Chat Desktop.
 **🎉 Major Update: Choose from 5 AI Providers!**
 
 **Download:**
-- **Windows Installer**: `[https://github.com/rod-trent/GarminChatDesktop/blob/main/Releases/GarminChatDesktop_Setup_v4.0.exe](GarminChatDesktop_Setup_v4.0.exe)` 
+- **Windows Installer**: [GarminChatDesktop_Setup_v4.0.exe](https://github.com/rod-trent/GarminChatDesktop/blob/main/Releases/GarminChatDesktop_Setup_v4.0.exe)
 
 **What's New:**
 - ✅ **5 AI Providers**: xAI (Grok), OpenAI (ChatGPT), Azure OpenAI, Google Gemini, Anthropic (Claude)
@@ -25,7 +25,6 @@ Official release packages for Garmin Chat Desktop.
 
 **System Requirements:**
 - Windows 10/11 (64-bit)
-- Python 3.12 or 3.13 (for source)
 - Internet connection
 - API key from at least one AI provider
 - Garmin Connect account
@@ -55,6 +54,7 @@ Official release packages for Garmin Chat Desktop.
 - **Free tier**: Try **Google Gemini** - Note: 15 req/min rate limit
 - **Best quality**: Use **Anthropic Claude** - Excellent for analysis
 - **Enterprise**: Consider **Azure OpenAI** - Compliance ready
+- **Accurate and most current information**: Consider **Grok xAI**
 
 ### Get API Keys:
 - **xAI**: https://console.x.ai/
@@ -89,8 +89,6 @@ Official release packages for Garmin Chat Desktop.
 - Native SDK support (Anthropic, Gemini)
 - Updated build system
 - Version 4.0.0.0 metadata
-
-**[Download v4.0.0](../../releases/tag/v4.0.0)**
 
 ---
 
@@ -174,12 +172,12 @@ Official release packages for Garmin Chat Desktop.
 
 ---
 
-## 📥 Installation Methods
+## 📥 Installation
 
-### **Option 1: Windows Installer** (Recommended)
+### **Windows Installer** (Recommended)
 **Best for most users**
 
-1. Download `GarminChatDesktop_Setup_v4.0.exe`
+1. Download [GarminChatDesktop_Setup_v4.0.exe](https://github.com/rod-trent/GarminChatDesktop/blob/main/Releases/GarminChatDesktop_Setup_v4.0.exe)
 2. Run the installer
 3. Follow the setup wizard
 4. Launch from Start Menu or Desktop
@@ -193,45 +191,6 @@ Official release packages for Garmin Chat Desktop.
 - ✅ Auto-updates (coming soon)
 
 **Size:** ~50-80 MB
-
----
-
-### **Option 2: Source Code**
-**Best for developers**
-
-1. Download `garmin-chat-v4.0-release.zip`
-2. Extract to a folder
-3. Run `Setup.bat` (installs Python dependencies)
-4. Run `Startup.bat` (launches application)
-
-**Advantages:**
-- ✅ View source code
-- ✅ Modify as needed
-- ✅ Build custom executable
-- ✅ Learn from code
-- ✅ Contribute improvements
-
-**Requirements:**
-- Python 3.12 or 3.13
-- Internet connection
-
----
-
-### **Option 3: Build from Source**
-**Best for customization**
-
-1. Clone or download repository
-2. Navigate to `/Code` folder
-3. Run `Setup.bat` (install dependencies)
-4. Run `build.bat` (create .exe with PyInstaller)
-5. Use `installer.iss` with Inno Setup (optional)
-
-**Build Tools Needed:**
-- Python 3.12+
-- PyInstaller
-- Inno Setup (for installer)
-
-See `BUILD-INSTRUCTIONS.md` in release package for details.
 
 ---
 
@@ -258,8 +217,9 @@ See `BUILD-INSTRUCTIONS.md` in release package for details.
 - ⚠️ Must select AI provider on first v4.0 launch
 - ⚠️ xAI API key needs re-entry in provider system
 - ✅ Can now add keys for all 5 providers
+- ✅ API keys for each provider is saved securely
 - ✅ Switch providers anytime
-
+  
 ---
 
 ### **From v2.x or v1.x to v4.0:**
@@ -315,16 +275,6 @@ See `BUILD-INSTRUCTIONS.md` in release package for details.
 - Click "More info" → "Run anyway"
 - This is normal for new installers
 
-**"Python not found" (source install)**
-- Install Python 3.12+ from python.org
-- Check "Add Python to PATH"
-- Restart terminal
-
-**"Setup.bat failed"**
-- Run as Administrator
-- Check internet connection
-- Try: `pip install -r requirements-desktop.txt`
-
 ---
 
 ### **v4.0 Specific Issues**
@@ -372,7 +322,6 @@ See `BUILD-INSTRUCTIONS.md` in release package for details.
 
 - **Main README**: [Repository Root](../../)
 - **FAQ**: [Frequently Asked Questions](../../FAQ.md)
-- **Build Guide**: `BUILD-INSTRUCTIONS.md` (in release package)
 - **Changelog**: `CHANGELOG.md` (in release package)
 - **Issues**: [Report Problems](../../issues)
 
