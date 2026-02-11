@@ -7,7 +7,7 @@ Chat with your Garmin fitness data using AI! Ask questions about your workouts, 
 ![Python](https://img.shields.io/badge/python-3.12%2B-blue)
 
 ---
-[Garmin Chat Desktop](https://github.com/rod-trent/GarminChatDesktop/blob/main/AppImages/DarkMode.jpg?raw=true)
+![Garmin Chat Desktop(https://github.com/rod-trent/GarminChatDesktop/blob/main/AppImages/DarkMode.jpg?raw=true "Dark Mode Engaged")
 
 ## 🎉 What's New in v4.0.1
 
