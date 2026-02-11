@@ -12,7 +12,6 @@ Official release packages for Garmin Chat Desktop.
 
 **Download:**
 - **Windows Installer**: `GarminChatDesktop_Setup_v4.0.1.exe`
-- **Source Code**: `garmin-chat-v4.0.1-release.zip`
 
 **What's Fixed:**
 - ✅ **Window Centering**: Properly centers on first launch (no more taskbar collision!)
