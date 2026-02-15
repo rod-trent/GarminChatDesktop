@@ -1,6 +1,6 @@
 # Garmin Chat Desktop
 
-# Garmin Chat Desktop v4.0.3
+**Garmin Chat Desktop v4.0.3**
 
 <div align="center">
 
