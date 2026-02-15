@@ -11,7 +11,7 @@
 
 Chat with your fitness data using natural language and get instant AI-powered analysis of your workouts, sleep, health metrics, and performance trends.
 
-[Download Latest](https://github.com/rod-trent/GarminChatDesktop/releases/latest) • [Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [Build Guide](BUILD_GUIDE.md)
+[Download Latest](https://github.com/rod-trent/GarminChatDesktop/tree/main/Releases) • [Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [Build Guide](BUILD_GUIDE.md)
 
 ![Garmin Chat Desktop](https://github.com/rod-trent/GarminChatDesktop/blob/main/AppImages/DarkMode.jpg?raw=true "Dark Mode Engaged")
 
