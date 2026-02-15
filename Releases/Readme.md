@@ -25,20 +25,19 @@ Official releases of Garmin Chat Desktop are published here.
 ### 📥 Download v4.0.3
 
 **Windows Installer (Recommended):**
-- [GarminChatDesktop_v4.0.3_Setup.exe](https://github.com/rod-trent/GarminChatDesktop/releases/download/v4.0.3/GarminChatDesktop_v4.0.3_Setup.exe)
+- [GarminChatDesktop_v4.0.3_Setup.exe](https://github.com/rod-trent/GarminChatDesktop/blob/main/Releases/GarminChatDesktop_v4.0.3_Setup.exe)
 - Size: ~60-80 MB
 - Includes uninstaller
 - Creates Start Menu shortcuts
 
 **Portable Version:**
-- [GarminChat.exe](https://github.com/rod-trent/GarminChatDesktop/releases/download/v4.0.3/GarminChat.exe)
+- [GarminChat.exe](https://github.com/rod-trent/GarminChatDesktop/blob/main/Releases/GarminChat.exe)
 - Size: ~50-70 MB
 - No installation required
 - Run from any location
 
 **Source Code:**
-- [Source code (zip)](https://github.com/rod-trent/GarminChatDesktop/archive/refs/tags/v4.0.3.zip)
-- [Source code (tar.gz)](https://github.com/rod-trent/GarminChatDesktop/archive/refs/tags/v4.0.3.tar.gz)
+- [Source code)](https://github.com/rod-trent/GarminChatDesktop/tree/main/Code)
 
 ### 📚 Documentation
 - [Complete README](https://github.com/rod-trent/GarminChatDesktop/blob/main/README.md)
@@ -55,8 +54,6 @@ pip uninstall google-generativeai
 pip install google-genai
 ```
 
-See [Gemini Migration Guide](https://github.com/rod-trent/GarminChatDesktop/blob/main/GEMINI_MIGRATION_GUIDE.md) for details.
-
 **Note:** Gemini API is currently in beta. For production use, we recommend:
 - ⭐ **xAI (Grok)** - Most cost-effective and reliable
 - ⭐ **OpenAI** - Most popular and well-tested
@@ -65,6 +62,14 @@ See [Gemini Migration Guide](https://github.com/rod-trent/GarminChatDesktop/blob
 ---
 
 ## Previous Releases
+
+### v4.0.2 (February 2026)
+💾 Saved Prompts - Save and reuse your favorite questions
+🔍 Search History - Find past conversations quickly
+🌓 Dark Mode - Easy on the eyes
+📊 Markdown Formatting - Clean, readable responses
+🔐 Local & Secure - All data stays on your computer
+
 
 ### v4.0.1 (February 2026)
 - 🐛 Fixed window positioning bugs
@@ -100,9 +105,6 @@ See [Gemini Migration Guide](https://github.com/rod-trent/GarminChatDesktop/blob
 2. Place in any folder
 3. Double-click to run
 4. No installation needed!
-
-### Building from Source
-See [Installation Guide](https://github.com/rod-trent/GarminChatDesktop/blob/main/INSTALL.md) for detailed instructions.
 
 ---
 
@@ -150,7 +152,7 @@ You'll need an API key from at least one provider:
 
 ## Support
 
-- **Documentation:** [README.md](https://github.com/rod-trent/GarminChatDesktop/blob/main/README.md)
+- **Documentation:** [Blog](https://rodtrent.substack.com/s/garmin-chat-desktop)
 - **Issues:** [GitHub Issues](https://github.com/rod-trent/GarminChatDesktop/issues)
 - **Discussions:** [GitHub Discussions](https://github.com/rod-trent/GarminChatDesktop/discussions)
 
@@ -188,11 +190,6 @@ MIT License - See [LICENSE.txt](https://github.com/rod-trent/GarminChatDesktop/b
 
 ---
 
-## Changelog
-
-See [CHANGELOG.md](https://github.com/rod-trent/GarminChatDesktop/blob/main/CHANGELOG.md) for complete version history.
-
----
 
 **Made with ❤️ for fitness enthusiasts**
 
