@@ -1,22 +1,13 @@
 # Garmin Chat Desktop
 
-Chat with your Garmin fitness data using AI! Ask questions about your workouts, sleep, steps, and more in natural language.
-
-![Version](https://img.shields.io/badge/version-4.0.1-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Python](https://img.shields.io/badge/python-3.12%2B-blue)
-
----
-![Garmin Chat Desktop](https://github.com/rod-trent/GarminChatDesktop/blob/main/AppImages/DarkMode.jpg?raw=true "Dark Mode Engaged")
-
-# Garmin Chat Desktop
-
 <div align="center">
 
 ![Version](https://img.shields.io/badge/version-4.0.2-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
+
+![Garmin Chat Desktop](https://github.com/rod-trent/GarminChatDesktop/blob/main/AppImages/DarkMode.jpg?raw=true "Dark Mode Engaged")
 
 **AI-Powered Insights for Your Garmin Connect Data**
 
