@@ -13,7 +13,7 @@ Chat with your fitness data using natural language and get instant AI-powered an
 
 [Download Latest](https://github.com/rod-trent/GarminChatDesktop/tree/main/Releases) • [Features](#-features) • [Installation](#-installation) • [Usage](#-usage)
 
-![Garmin Chat Desktop](https://github.com/rod-trent/GarminChatDesktop/blob/main/AppImages/DarkMode.jpg?raw=true "Dark Mode Engaged")
+![Garmin Chat Desktop](https://github.com/rod-trent/GarminChatDesktop/blob/main/AppImages/GarminChatDesktop.jpg?raw=true "Dark Mode Engaged")
 
 </div>
 
