@@ -320,6 +320,7 @@ C:\Users\YourName\.garmin_chat\
 - 🎯 Enhanced all dialogs with Fluent Design
 - 📄 Added Export Report text label
 - 🌓 Improved dark mode consistency
+- 🔧 Developer Note: Migrated from deprecated google-generativeai to google-genai package
 
 ### v4.0.1 (February 2026)
 - 🐛 Fixed window positioning bugs
