@@ -23,8 +23,6 @@ Garmin Chat Desktop is a local desktop chatbot that lets you interact with your 
 
 </div>
 
-**AI-powered insights for your fitness data**
-
 ---
 
 ## 🎯 Features
