@@ -45,8 +45,8 @@ class AIClient:
             'models': ['gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'],
             'default_model': 'gemini-1.5-flash',
             'supports_streaming': True,
-            'uses_native_sdk': True,  # Use native Google SDK, not OpenAI-compatible
-            'note': 'If models not found, your API key may need to enable Gemini API in Google Cloud Console'
+            'uses_native_sdk': True,  # Use native Google SDK (google-genai package)
+            'note': 'Requires google-genai package (replaces deprecated google-generativeai)'
         },
         'anthropic': {
             'name': 'Anthropic (Claude)',
@@ -130,18 +130,15 @@ class AIClient:
         )
     
     def _init_gemini(self):
-        """Initialize Google Gemini client (using native SDK)."""
+        """Initialize Google Gemini client (using new google-genai SDK)."""
         try:
-            import google.generativeai as genai
-            genai.configure(api_key=self.api_key)
-            return genai
+            import google.genai as genai
+            # New API uses Client object instead of configure()
+            client = genai.Client(api_key=self.api_key)
+            return client
         except ImportError:
-            # Fallback to OpenAI-compatible if google-generativeai not installed
-            logger.warning("google-generativeai not installed, trying OpenAI-compatible interface")
-            return OpenAI(
-                api_key=self.api_key,
-                base_url=self.PROVIDERS['gemini']['base_url']
-            )
+            logger.error("google-genai package not installed. Install with: pip install google-genai")
+            raise ImportError("google-genai package is required for Gemini. Install with: pip install google-genai")
     
     def _init_anthropic(self):
         """Initialize Anthropic (Claude) client."""
@@ -446,27 +443,36 @@ The user's Garmin data will be provided in the context below."""
         return response.content[0].text
     
     def _call_gemini(self, system_prompt: str, user_message: str) -> str:
-        """Call Gemini using native SDK."""
+        """Call Gemini using new google-genai SDK."""
         try:
-            # Gemini model names don't need 'models/' prefix with the SDK
-            # The SDK handles this automatically
-            # But we need to use the exact model names
-            model_name = self.model
+            from google.genai import types
             
-            # Create model instance
-            model = self.client.GenerativeModel(model_name)
-            
-            # Gemini doesn't have separate system prompts in the same way
-            # So we prepend it to the first message
+            # Prepare the full prompt with system message
+            # New API doesn't have separate system role, so combine them
             if len(self.conversation_history) == 1:  # First message
-                combined_message = f"{system_prompt}\n\n{user_message}"
+                full_prompt = f"{system_prompt}\n\nUser: {user_message}"
             else:
-                combined_message = user_message
+                # For continuing conversations, just send the user message
+                # The history already has context
+                full_prompt = user_message
             
-            # Generate response
-            response = model.generate_content(combined_message)
+            # The model name should NOT have 'models/' prefix for the new API
+            # The SDK will add it automatically
+            model_name = self.model.replace('models/', '')  # Strip if present
             
-            return response.text
+            # Use the new generate_content method on the client
+            response = self.client.models.generate_content(
+                model=model_name,
+                contents=full_prompt
+            )
+            
+            # Extract text from response
+            if hasattr(response, 'text'):
+                return response.text
+            elif hasattr(response, 'candidates') and len(response.candidates) > 0:
+                return response.candidates[0].content.parts[0].text
+            else:
+                raise ValueError(f"Unexpected response format from Gemini: {response}")
             
         except Exception as e:
             # If native SDK fails, log and re-raise
