@@ -1,0 +1,63 @@
+# Garmin Chat Desktop v4.0.3 - Python Requirements
+# =====================================================
+# Install all dependencies: pip install -r requirements.txt
+
+# Core Dependencies
+# -----------------
+# Garmin Connect API
+garminconnect>=0.2.0
+
+# HTTP requests
+requests>=2.31.0
+
+# GUI - Tkinter (usually included with Python, but listed for reference)
+# Note: On some Linux systems, install python3-tk separately
+
+# Image handling for splash screen and logo
+Pillow>=10.0.0
+
+
+# AI Provider SDKs
+# ----------------
+# xAI (Grok) - uses OpenAI-compatible API
+openai>=1.0.0
+
+# Google Gemini - NEW package (replaces deprecated google-generativeai)
+google-genai>=0.2.0
+
+# Anthropic (Claude)
+anthropic>=0.18.0
+
+
+# Build/Packaging Tools (Development only)
+# -----------------------------------------
+# PyInstaller for creating executable
+pyinstaller>=6.0.0
+
+
+# Optional Dependencies
+# ---------------------
+# For PDF export functionality (optional)
+# reportlab>=4.0.0
+
+# For Word document export (optional)
+# python-docx>=1.0.0
+
+
+# Notes
+# -----
+# 1. Python 3.8+ required
+# 2. Windows 10+ recommended for desktop app
+# 3. OpenAI package is used for both xAI and OpenAI providers
+# 4. Azure OpenAI uses the openai package with azure_endpoint parameter
+# 5. google-genai replaces the deprecated google-generativeai package
+# 6. Tkinter is usually included with Python on Windows/Mac
+#    - On Linux: sudo apt-get install python3-tk (Debian/Ubuntu)
+#    - On Linux: sudo dnf install python3-tkinter (Fedora/RHEL)
+
+# Migration from v4.0.2 or earlier:
+# ----------------------------------
+# If you had google-generativeai installed, uninstall it first:
+#   pip uninstall google-generativeai
+# Then install the new requirements:
+#   pip install -r requirements.txt
