@@ -36,8 +36,6 @@ Chat sessions now show as: `"Custom Name (2026-02-14 15:30)"` making it easy to 
 - ✅ Updated Chat History dialog icon
 - ✅ Improved backward compatibility
 
-[See Full Changelog](CHANGELOG.md)
-
 ---
 
 ## 🎯 Overview
