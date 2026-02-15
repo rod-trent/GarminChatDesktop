@@ -15,9 +15,13 @@
 
 Garmin Chat Desktop is a local desktop chatbot that lets you interact with your Garmin Connect data using natural language. Ask questions about your workouts, sleep, steps, and activities in plain English and get intelligent AI-powered responses.
 
+<div align="center">
+
 [Download Latest](https://github.com/rod-trent/GarminChatDesktop/tree/main/Releases) • [Features](#-features) • [Installation](#-installation)
 
 ![Garmin Chat Desktop](https://github.com/rod-trent/GarminChatDesktop/blob/main/AppImages/GarminChatDesktop.jpg?raw=true "Dark Mode Engaged")
+
+</div>
 
 **AI-powered insights for your fitness data**
 
