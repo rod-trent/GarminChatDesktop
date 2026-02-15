@@ -9,6 +9,8 @@
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
+</div>
+
 **AI-Powered Insights for Your Garmin Connect Data**
 
 Garmin Chat Desktop is a local desktop chatbot that lets you interact with your Garmin Connect data using natural language. Ask questions about your workouts, sleep, steps, and activities in plain English and get intelligent AI-powered responses.
