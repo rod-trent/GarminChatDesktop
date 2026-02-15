@@ -458,7 +458,6 @@ Only what's needed for your question:
 - App is written in Python (cross-platform)
 - Tkinter works on Mac/Linux
 - No pre-built executables yet
-- Build from source: See [INSTALL.md](INSTALL.md)
 
 **Limitations:**
 - Build scripts are Windows-specific
@@ -479,8 +478,6 @@ Only what's needed for your question:
 - Report bugs in Issues
 - Suggest features in Discussions
 
-See [Code/Readme.md](Code/Readme.md) for developer documentation.
-
 ### How do I build from source?
 
 **Quick version:**
@@ -490,8 +487,6 @@ cd GarminChatDesktop/Code
 pip install -r requirements.txt
 python GarminChatDesktop.py
 ```
-
-**Full instructions:** See [INSTALL.md](INSTALL.md)
 
 ### Why is the executable so large (50-70 MB)?
 
@@ -552,10 +547,9 @@ This is normal for PyInstaller applications.
 - **General Questions:** [GitHub Discussions](https://github.com/rod-trent/GarminChatDesktop/discussions)
 
 ### Quick Links
-- [Download Latest Release](https://github.com/rod-trent/GarminChatDesktop/releases/latest)
-- [View Source Code](https://github.com/rod-trent/GarminChatDesktop)
-- [Gemini Troubleshooting Guide](GEMINI_TROUBLESHOOTING.md)
-- [Gemini Migration Guide](GEMINI_MIGRATION_GUIDE.md)
+- [Download Latest Release](https://github.com/rod-trent/GarminChatDesktop/releases)
+- [View Source Code](https://github.com/rod-trent/GarminChatDesktop/tree/main/Code)
+- [Gemini Migration Guide](https://github.com/rod-trent/GarminChatDesktop/blob/main/Code/GEMINI_MIGRATION_GUIDE.md)
 
 ---
 
