@@ -522,13 +522,13 @@ class GarminChatApp:
                     if self.gemini_model in model_migrations:
                         old_model = self.gemini_model
                         self.gemini_model = model_migrations[old_model]
-                        logger.info(f"Auto-migrated Gemini model: {old_model} → {self.gemini_model}")
+                        logger.info(f"Auto-migrated Gemini model: {old_model} â†’ {self.gemini_model}")
                     
                     # Migrate xAI model if deprecated
                     if self.xai_model in model_migrations:
                         old_model = self.xai_model
                         self.xai_model = model_migrations[old_model]
-                        logger.info(f"Auto-migrated xAI model: {old_model} → {self.xai_model}")
+                        logger.info(f"Auto-migrated xAI model: {old_model} â†’ {self.xai_model}")
                     
                     # Garmin settings
                     self.garmin_email = config.get('garmin_email', '')
@@ -843,7 +843,7 @@ class GarminChatApp:
         button_container.grid(row=0, column=1, rowspan=2, padx=(10, 0))
         
         search_btn = ttk.Button(button_container,
-                               text="🔍",
+                               text="🔍",
                                command=self.open_search,
                                style='Modern.TButton',
                                width=4)
@@ -870,7 +870,7 @@ class GarminChatApp:
         control_card.grid(row=1, column=0, sticky=(tk.W, tk.E), pady=(0, 15))
         
         self.connect_btn = ttk.Button(control_card,
-                                     text="🔐 Connect to Garmin",
+                                     text="🔌 Connect to Garmin",
                                      command=self.connect_to_garmin,
                                      style='Accent.TButton')
         self.connect_btn.grid(row=0, column=0, padx=(0, 8))
@@ -899,12 +899,12 @@ class GarminChatApp:
         self.create_tooltip(self.save_prompts_btn, "Manage saved prompts")
         
         self.save_chat_btn = ttk.Button(control_card,
-                                       text="📝 Save",
+                                       text="💾 Save",
                                        command=self.save_chat_history,
                                        style='Modern.TButton',
                                        state=tk.DISABLED)
         self.save_chat_btn.grid(row=0, column=4, padx=4)
-        self.create_tooltip(self.save_chat_btn, "Save this conversation")
+        self.create_tooltip(self.save_chat_btn, "Save this conversation with a custom name")
         
         self.view_chats_btn = ttk.Button(control_card,
                                         text="📂 History",
@@ -926,7 +926,7 @@ class GarminChatApp:
         
         # Status label
         self.status_label = ttk.Label(control_card,
-                                     text="●  Not connected",
+                                     text="⚪  Not connected",
                                      style='Status.TLabel')
         self.status_label.grid(row=1, column=0, columnspan=7, sticky=tk.W, pady=(10, 0))
         
@@ -1028,7 +1028,7 @@ class GarminChatApp:
         
         # Send button with modern accent style
         self.send_btn = ttk.Button(input_card,
-                                   text="Send →",
+                                   text="Send â†’",
                                    command=self.send_message,
                                    state=tk.DISABLED,
                                    style='Accent.TButton')
@@ -1370,11 +1370,11 @@ class GarminChatApp:
                 self.root.after(0, lambda: self._show_mfa_input())
             else:
                 error_msg = result.get('error', 'Unknown error')
-                self.root.after(0, lambda: self.update_status(f"❌ {error_msg}", True))
+                self.root.after(0, lambda: self.update_status(f"âŒ {error_msg}", True))
                 self.root.after(0, lambda: self.connect_btn.config(state=tk.NORMAL))
                 
         except Exception as e:
-            self.root.after(0, lambda: self.update_status(f"❌ Error: {str(e)}", True))
+            self.root.after(0, lambda: self.update_status(f"âŒ Error: {str(e)}", True))
             self.root.after(0, lambda: self.connect_btn.config(state=tk.NORMAL))
             
     def _show_mfa_input(self):
@@ -1388,7 +1388,7 @@ class GarminChatApp:
         mfa_code = self.mfa_entry.get().strip()
         
         if not mfa_code or len(mfa_code) != 6:
-            self.update_status("❌ Please enter a valid 6-digit MFA code", True)
+            self.update_status("âŒ Please enter a valid 6-digit MFA code", True)
             return
             
         self.mfa_btn.config(state=tk.DISABLED)
@@ -1411,11 +1411,11 @@ class GarminChatApp:
                 self.root.after(0, lambda: self.mfa_frame.grid_remove())
             else:
                 error_msg = result.get('error', 'Unknown error')
-                self.root.after(0, lambda: self.update_status(f"❌ {error_msg}", True))
+                self.root.after(0, lambda: self.update_status(f"âŒ {error_msg}", True))
                 self.root.after(0, lambda: self.mfa_btn.config(state=tk.NORMAL))
                 
         except Exception as e:
-            self.root.after(0, lambda: self.update_status(f"❌ Error: {str(e)}", True))
+            self.root.after(0, lambda: self.update_status(f"âŒ Error: {str(e)}", True))
             self.root.after(0, lambda: self.mfa_btn.config(state=tk.NORMAL))
             
     def _on_auth_success(self):
@@ -1441,7 +1441,7 @@ class GarminChatApp:
     def send_message(self):
         """Send a message to the chatbot"""
         if not self.authenticated:
-            self.update_status("❌ Please connect to Garmin first", True)
+            self.update_status("âŒ Please connect to Garmin first", True)
             return
             
         # Get message from Text widget
@@ -1671,7 +1671,7 @@ class GarminChatApp:
     def use_example(self, question):
         """Use an example question"""
         if not self.authenticated:
-            self.update_status("❌ Please connect to Garmin first", True)
+            self.update_status("âŒ Please connect to Garmin first", True)
             return
             
         self.message_entry.delete("1.0", tk.END)
@@ -1702,9 +1702,9 @@ class GarminChatApp:
                 self.root.after(0, lambda: self.update_status("🔐 MFA Required: Enter your 6-digit code", False))
             else:
                 error_msg = result.get('error', 'Unknown error')
-                self.root.after(0, lambda: self.update_status(f"❌ {error_msg}", True))
+                self.root.after(0, lambda: self.update_status(f"âŒ {error_msg}", True))
         except Exception as e:
-            self.root.after(0, lambda: self.update_status(f"❌ Error: {str(e)}", True))
+            self.root.after(0, lambda: self.update_status(f"âŒ Error: {str(e)}", True))
         finally:
             self.root.after(0, lambda: self.refresh_btn.config(state=tk.NORMAL))
             
@@ -1760,26 +1760,106 @@ class GarminChatApp:
             logger.error(f"Error deleting prompt: {e}")
     
     def save_chat_history(self):
-        """Save current chat session to file"""
+        """Save current chat session to file with custom name"""
         if not self.current_chat_history:
             messagebox.showinfo("No Chat History", "There's no chat history to save yet!", parent=self.root)
             return
         
+        # Prompt for custom name
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Save Chat Session")
+        dialog.geometry("500x200")
+        dialog.transient(self.root)
+        dialog.grab_set()
+        
+        # Set window icon
         try:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = self.chat_history_dir / f"chat_{timestamp}.json"
+            if getattr(sys, 'frozen', False):
+                base_path = Path(sys._MEIPASS)
+            else:
+                base_path = Path(__file__).parent
             
-            with open(filename, 'w') as f:
-                json.dump({
-                    'saved_at': datetime.now().isoformat(),
-                    'messages': self.current_chat_history
-                }, f, indent=2)
-            
-            messagebox.showinfo("Chat Saved", f"Chat history saved successfully!\n\nLocation: {filename}", parent=self.root)
-            logger.info(f"Saved chat history to: {filename}")
+            icon_path = base_path / "logo.ico"
+            if icon_path.exists():
+                dialog.iconbitmap(str(icon_path))
         except Exception as e:
-            logger.error(f"Error saving chat history: {e}")
-            messagebox.showerror("Save Error", f"Failed to save chat history: {e}", parent=self.root)
+            logger.debug(f"Could not load Save dialog icon: {e}")
+        
+        # Center on parent
+        dialog.update_idletasks()
+        x = self.root.winfo_x() + (self.root.winfo_width() // 2) - (dialog.winfo_width() // 2)
+        y = self.root.winfo_y() + (self.root.winfo_height() // 2) - (dialog.winfo_height() // 2)
+        dialog.geometry(f"+{x}+{y}")
+        
+        frame = ttk.Frame(dialog, padding="20")
+        frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        dialog.columnconfigure(0, weight=1)
+        dialog.rowconfigure(0, weight=1)
+        frame.columnconfigure(1, weight=1)
+        
+        ttk.Label(frame, text="💾 Save Chat Session", 
+                 font=('Segoe UI', 12, 'bold')).grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(0, 15))
+        
+        ttk.Label(frame, text="Session Name:", 
+                 font=('Segoe UI', 10)).grid(row=1, column=0, sticky=tk.W, pady=5)
+        
+        name_var = tk.StringVar()
+        name_entry = ttk.Entry(frame, textvariable=name_var, font=('Segoe UI', 10), width=40)
+        name_entry.grid(row=1, column=1, sticky=(tk.W, tk.E), pady=5, padx=(10, 0))
+        name_entry.focus()
+        
+        ttk.Label(frame, text="(Optional - leave blank for date/time only)", 
+                 font=('Segoe UI', 8), foreground='gray').grid(row=2, column=1, sticky=tk.W, padx=(10, 0))
+        
+        result = {'saved': False}
+        
+        def save_with_name():
+            custom_name = name_var.get().strip()
+            try:
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                
+                # Create filename with custom name if provided
+                if custom_name:
+                    # Sanitize the custom name for filename
+                    safe_name = "".join(c for c in custom_name if c.isalnum() or c in (' ', '-', '_')).strip()
+                    safe_name = safe_name.replace(' ', '_')
+                    filename = self.chat_history_dir / f"chat_{timestamp}_{safe_name}.json"
+                else:
+                    filename = self.chat_history_dir / f"chat_{timestamp}.json"
+                
+                with open(filename, 'w') as f:
+                    json.dump({
+                        'saved_at': datetime.now().isoformat(),
+                        'custom_name': custom_name if custom_name else None,
+                        'messages': self.current_chat_history
+                    }, f, indent=2)
+                
+                result['saved'] = True
+                dialog.destroy()
+                
+                display_name = custom_name if custom_name else "chat session"
+                messagebox.showinfo("Chat Saved", 
+                                  f"'{display_name}' saved successfully!\n\nLocation: {filename}", 
+                                  parent=self.root)
+                logger.info(f"Saved chat history to: {filename}")
+                
+            except Exception as e:
+                logger.error(f"Error saving chat history: {e}")
+                messagebox.showerror("Save Error", f"Failed to save chat history: {e}", parent=dialog)
+        
+        def cancel():
+            dialog.destroy()
+        
+        button_frame = ttk.Frame(frame)
+        button_frame.grid(row=3, column=0, columnspan=2, pady=(20, 0))
+        
+        ttk.Button(button_frame, text="Save", command=save_with_name, width=10).grid(row=0, column=0, padx=5)
+        ttk.Button(button_frame, text="Cancel", command=cancel, width=10).grid(row=0, column=1, padx=5)
+        
+        # Bind Enter key to save
+        name_entry.bind('<Return>', lambda e: save_with_name())
+        dialog.bind('<Escape>', lambda e: cancel())
+    
     
     def open_chat_history_viewer(self):
         """Open dialog to view saved chat histories"""
@@ -2304,7 +2384,7 @@ class SearchDialog(tk.Toplevel):
         main_frame.rowconfigure(2, weight=1)
         
         # Title
-        ttk.Label(main_frame, text="🔍 Search Chat History", 
+        ttk.Label(main_frame, text="🔍 Search Chat History", 
                  font=('Segoe UI', 14, 'bold')).grid(row=0, column=0, sticky=tk.W, pady=(0, 15))
         
         # Search box
@@ -2587,6 +2667,22 @@ class ChatHistoryViewer(tk.Toplevel):
         self.geometry("900x650")
         self.app = app
         
+        # Set window icon (same as main window)
+        try:
+            # Get the correct base path for PyInstaller exe
+            if getattr(sys, 'frozen', False):
+                # Running as compiled executable
+                base_path = Path(sys._MEIPASS)
+            else:
+                # Running as script
+                base_path = Path(__file__).parent
+            
+            icon_path = base_path / "logo.ico"
+            if icon_path.exists():
+                self.iconbitmap(str(icon_path))
+        except Exception as e:
+            logger.debug(f"Could not load Chat History dialog icon: {e}")
+        
         # Make modal
         self.transient(parent)
         self.grab_set()
@@ -2654,9 +2750,10 @@ class ChatHistoryViewer(tk.Toplevel):
         button_frame.grid(row=2, column=0, columnspan=2, pady=(15, 0))
         
         ttk.Button(button_frame, text="Load Into Chat", command=self.load_into_current).grid(row=0, column=0, padx=5)
-        ttk.Button(button_frame, text="🗑️ Delete", command=self.delete_chat).grid(row=0, column=1, padx=5)
-        ttk.Button(button_frame, text="📁 Open Folder", command=self.open_folder).grid(row=0, column=2, padx=5)
-        ttk.Button(button_frame, text="Close", command=self.destroy).grid(row=0, column=3, padx=5)
+        ttk.Button(button_frame, text="✏️ Rename", command=self.rename_chat).grid(row=0, column=1, padx=5)
+        ttk.Button(button_frame, text="🗑️ Delete", command=self.delete_chat).grid(row=0, column=2, padx=5)
+        ttk.Button(button_frame, text="📁 Open Folder", command=self.open_folder).grid(row=0, column=3, padx=5)
+        ttk.Button(button_frame, text="Close", command=self.destroy).grid(row=0, column=4, padx=5)
         
         # Load chats
         self.load_chat_list()
@@ -2675,14 +2772,39 @@ class ChatHistoryViewer(tk.Toplevel):
             for file in files:
                 self.chat_files.append(file)
                 
-                # Format: chat_YYYYMMDD_HHMMSS.json
+                # Try to load custom name from JSON
+                try:
+                    with open(file, 'r') as f:
+                        data = json.load(f)
+                        custom_name = data.get('custom_name')
+                except:
+                    custom_name = None
+                
+                # Format: chat_YYYYMMDD_HHMMSS.json or chat_YYYYMMDD_HHMMSS_CustomName.json
                 try:
                     filename = file.stem
-                    timestamp = filename.replace('chat_', '')
-                    date_part = timestamp[:8]  # YYYYMMDD
-                    time_part = timestamp[9:]  # HHMMSS
                     
-                    display = f"{date_part[:4]}-{date_part[4:6]}-{date_part[6:8]} {time_part[:2]}:{time_part[2:4]}:{time_part[4:6]}"
+                    # Extract custom name from filename if present
+                    if '_' in filename and not custom_name:
+                        parts = filename.split('_')
+                        if len(parts) >= 4:  # chat_DATE_TIME_NAME format
+                            custom_name = '_'.join(parts[3:])
+                    
+                    # Extract timestamp
+                    timestamp = filename.replace('chat_', '').split('_')[0:2]
+                    if len(timestamp) == 2:
+                        date_part = timestamp[0]  # YYYYMMDD
+                        time_part = timestamp[1]  # HHMMSS
+                        
+                        date_str = f"{date_part[:4]}-{date_part[4:6]}-{date_part[6:8]}"
+                        time_str = f"{time_part[:2]}:{time_part[2:4]}:{time_part[4:6]}"
+                        
+                        if custom_name:
+                            display = f"{custom_name} ({date_str} {time_str})"
+                        else:
+                            display = f"{date_str} {time_str}"
+                    else:
+                        display = file.name
                 except:
                     display = file.name
                 
@@ -2820,6 +2942,135 @@ class ChatHistoryViewer(tk.Toplevel):
             except Exception as e:
                 logger.error(f"Error deleting chat: {e}")
                 messagebox.showerror("Error", f"Failed to delete chat: {e}", parent=self)
+    
+    def rename_chat(self):
+        """Rename selected chat session"""
+        selection = self.chat_listbox.curselection()
+        if not selection:
+            messagebox.showwarning("No Selection", "Please select a chat to rename", parent=self)
+            return
+        
+        index = selection[0]
+        file = self.chat_files[index]
+        
+        # Load current name
+        try:
+            with open(file, 'r') as f:
+                data = json.load(f)
+                current_name = data.get('custom_name', '')
+        except:
+            current_name = ''
+        
+        # Prompt for new name
+        dialog = tk.Toplevel(self)
+        dialog.title("Rename Chat Session")
+        dialog.geometry("500x180")
+        dialog.transient(self)
+        dialog.grab_set()
+        
+        # Set window icon
+        try:
+            if getattr(sys, 'frozen', False):
+                base_path = Path(sys._MEIPASS)
+            else:
+                base_path = Path(__file__).parent
+            
+            icon_path = base_path / "logo.ico"
+            if icon_path.exists():
+                dialog.iconbitmap(str(icon_path))
+        except Exception as e:
+            logger.debug(f"Could not load Rename dialog icon: {e}")
+        
+        # Center on parent
+        dialog.update_idletasks()
+        x = self.winfo_x() + (self.winfo_width() // 2) - (dialog.winfo_width() // 2)
+        y = self.winfo_y() + (self.winfo_height() // 2) - (dialog.winfo_height() // 2)
+        dialog.geometry(f"+{x}+{y}")
+        
+        frame = ttk.Frame(dialog, padding="20")
+        frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        dialog.columnconfigure(0, weight=1)
+        dialog.rowconfigure(0, weight=1)
+        frame.columnconfigure(1, weight=1)
+        
+        ttk.Label(frame, text="✏️ Rename Chat Session", 
+                 font=('Segoe UI', 12, 'bold')).grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(0, 15))
+        
+        ttk.Label(frame, text="New Name:", 
+                 font=('Segoe UI', 10)).grid(row=1, column=0, sticky=tk.W, pady=5)
+        
+        name_var = tk.StringVar(value=current_name)
+        name_entry = ttk.Entry(frame, textvariable=name_var, font=('Segoe UI', 10), width=40)
+        name_entry.grid(row=1, column=1, sticky=(tk.W, tk.E), pady=5, padx=(10, 0))
+        name_entry.focus()
+        name_entry.select_range(0, tk.END)
+        
+        def save_rename():
+            new_name = name_var.get().strip()
+            try:
+                # Load current data
+                with open(file, 'r') as f:
+                    data = json.load(f)
+                
+                # Update custom name
+                data['custom_name'] = new_name if new_name else None
+                
+                # Save back to same file
+                with open(file, 'w') as f:
+                    json.dump(data, f, indent=2)
+                
+                # Optionally update filename
+                if new_name:
+                    # Extract timestamp from filename
+                    filename_parts = file.stem.split('_')
+                    if len(filename_parts) >= 3:
+                        timestamp_date = filename_parts[1]
+                        timestamp_time = filename_parts[2]
+                        
+                        # Sanitize name for filename
+                        safe_name = "".join(c for c in new_name if c.isalnum() or c in (' ', '-', '_')).strip()
+                        safe_name = safe_name.replace(' ', '_')
+                        
+                        new_filename = file.parent / f"chat_{timestamp_date}_{timestamp_time}_{safe_name}.json"
+                        
+                        # Rename file if new filename is different
+                        if new_filename != file:
+                            file.rename(new_filename)
+                            logger.info(f"Renamed file: {file.name} -> {new_filename.name}")
+                
+                dialog.destroy()
+                
+                # Reload the chat list to show new name
+                self.load_chat_list()
+                
+                # Reselect the same item (it may have moved due to sorting)
+                for i, f in enumerate(self.chat_files):
+                    if f.stem.startswith(f"chat_{timestamp_date}_{timestamp_time}"):
+                        self.chat_listbox.selection_clear(0, tk.END)
+                        self.chat_listbox.selection_set(i)
+                        self.chat_listbox.see(i)
+                        # Trigger the display update
+                        self.on_chat_select(None)
+                        break
+                
+                logger.info(f"Renamed chat session to: {new_name}")
+                
+            except Exception as e:
+                logger.error(f"Error renaming chat: {e}")
+                messagebox.showerror("Rename Error", f"Failed to rename chat: {e}", parent=dialog)
+        
+        def cancel():
+            dialog.destroy()
+        
+        button_frame = ttk.Frame(frame)
+        button_frame.grid(row=2, column=0, columnspan=2, pady=(20, 0))
+        
+        ttk.Button(button_frame, text="Save", command=save_rename, width=10).grid(row=0, column=0, padx=5)
+        ttk.Button(button_frame, text="Cancel", command=cancel, width=10).grid(row=0, column=1, padx=5)
+        
+        # Bind Enter key to save
+        name_entry.bind('<Return>', lambda e: save_rename())
+        dialog.bind('<Escape>', lambda e: cancel())
     
     def open_folder(self):
         """Open chat history folder in file explorer"""
