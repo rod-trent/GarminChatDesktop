@@ -3,6 +3,9 @@ Garmin Chat - Standalone Desktop Application
 A local desktop chatbot for querying Garmin Connect data.
 """
 
+# Application version
+APP_VERSION = "4.0.3"
+
 import sys
 import tkinter as tk
 from tkinter import ttk, scrolledtext, messagebox
@@ -18,15 +21,134 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+class SplashScreen(tk.Toplevel):
+    """Splash screen shown during app startup"""
+    
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.title("Garmin Chat")
+        
+        # Remove window decorations
+        self.overrideredirect(True)
+        
+        # Set size (increased height to prevent text cutoff)
+        width = 400
+        height = 350
+        
+        # Center on screen
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        x = (screen_width - width) // 2
+        y = (screen_height - height) // 2
+        self.geometry(f"{width}x{height}+{x}+{y}")
+        
+        # Set background color
+        self.configure(bg='#0078D4')
+        
+        # Create frame with shadow effect
+        frame = tk.Frame(self, bg='#0078D4')
+        frame.pack(fill=tk.BOTH, expand=True, padx=2, pady=2)
+        
+        # Try to load and display logo
+        try:
+            if getattr(sys, 'frozen', False):
+                base_path = Path(sys._MEIPASS)
+            else:
+                base_path = Path(__file__).parent
+            
+            logo_path = base_path / "logo.png"
+            if logo_path.exists():
+                from PIL import Image, ImageTk
+                img = Image.open(logo_path)
+                img = img.resize((100, 100), Image.Resampling.LANCZOS)
+                photo = ImageTk.PhotoImage(img)
+                logo_label = tk.Label(frame, image=photo, bg='#0078D4')
+                logo_label.image = photo  # Keep reference
+                logo_label.pack(pady=(40, 10))
+        except Exception as e:
+            logger.debug(f"Could not load splash logo: {e}")
+        
+        # App name
+        title_label = tk.Label(frame,
+                              text="Garmin Chat",
+                              font=('Segoe UI', 24, 'bold'),
+                              bg='#0078D4',
+                              fg='white')
+        title_label.pack(pady=(10, 5))
+        
+        # Version
+        version_label = tk.Label(frame,
+                                text=f"Version {APP_VERSION}",
+                                font=('Segoe UI', 10),
+                                bg='#0078D4',
+                                fg='white')
+        version_label.pack(pady=(0, 30))
+        
+        # Loading message
+        self.status_label = tk.Label(frame,
+                                     text="Loading...",
+                                     font=('Segoe UI', 10),
+                                     bg='#0078D4',
+                                     fg='white')
+        self.status_label.pack(pady=10)
+        
+        # Progress bar
+        self.progress = ttk.Progressbar(frame,
+                                       mode='indeterminate',
+                                       length=300)
+        self.progress.pack(pady=10)
+        self.progress.start(10)
+        
+        # Update to show window
+        self.update()
+    
+    def update_status(self, message):
+        """Update the status message"""
+        self.status_label.config(text=message)
+        self.update()
+    
+    def close(self):
+        """Close the splash screen"""
+        self.progress.stop()
+        self.destroy()
+
+
 class SettingsDialog(tk.Toplevel):
     """Dialog for managing application settings including AI provider selection"""
     
     def __init__(self, parent, current_config=None, colors=None):
         super().__init__(parent)
+        
+        # Make modal and transient FIRST (before withdraw)
+        self.transient(parent)
+        
         self.title("Settings")
-        self.geometry("700x700")
+        
+        # Store colors (use parent's colors or defaults)
+        self.colors = colors or {
+            'bg': '#F3F3F3',
+            'card_bg': '#FFFFFF',
+            'text': '#1F1F1F',
+            'text_secondary': '#605E5C',
+            'border': '#EDEBE9',
+            'accent': '#0078D4'
+        }
+        
+        # Calculate centered position BEFORE setting geometry
+        width = 700
+        height = 700
+        x = parent.winfo_x() + (parent.winfo_width() // 2) - (width // 2)
+        y = parent.winfo_y() + (parent.winfo_height() // 2) - (height // 2)
+        
+        # Set geometry with position in one call (prevents flashing)
+        self.geometry(f"{width}x{height}+{x}+{y}")
         self.resizable(False, False)
         
+        # Withdraw to prevent flash during setup
+        self.withdraw()
+        
+        # Apply Fluent Design theme to dialog
+        self.configure(bg=self.colors['bg'])
         # Set window icon (same as main window)
         try:
             # Get the correct base path for PyInstaller exe
@@ -42,29 +164,6 @@ class SettingsDialog(tk.Toplevel):
                 self.iconbitmap(str(icon_path))
         except Exception as e:
             logger.debug(f"Could not load Settings dialog icon: {e}")
-        
-        # Store colors (use parent's colors or defaults)
-        self.colors = colors or {
-            'bg': '#F3F3F3',
-            'card_bg': '#FFFFFF',
-            'text': '#1F1F1F',
-            'text_secondary': '#605E5C',
-            'border': '#EDEBE9',
-            'accent': '#0078D4'
-        }
-        
-        # Apply theme to dialog
-        self.configure(bg=self.colors['bg'])
-        
-        # Make modal
-        self.transient(parent)
-        self.grab_set()
-        
-        # Center on parent
-        self.update_idletasks()
-        x = parent.winfo_x() + (parent.winfo_width() // 2) - (self.winfo_width() // 2)
-        y = parent.winfo_y() + (parent.winfo_height() // 2) - (self.winfo_height() // 2)
-        self.geometry(f"+{x}+{y}")
         
         self.result = None
         self.current_config = current_config or {}
@@ -97,6 +196,10 @@ class SettingsDialog(tk.Toplevel):
         
         self.create_widgets()
         
+        # Show window and grab focus after everything is set up
+        self.deiconify()
+        self.grab_set()
+        
     def create_widgets(self):
         """Create settings dialog widgets"""
         # Configure ttk styles for this dialog with current theme
@@ -113,6 +216,16 @@ class SettingsDialog(tk.Toplevel):
                        background=self.colors['bg'],
                        foreground=self.colors['text'],
                        font=('Segoe UI', 11, 'bold'))
+        
+        style.configure('Settings.CardHeader.TLabel',
+                       background=self.colors['card_bg'],
+                       foreground=self.colors['text'],
+                       font=('Segoe UI', 10, 'bold'))
+        
+        style.configure('Settings.CardText.TLabel',
+                       background=self.colors['card_bg'],
+                       foreground=self.colors['text'],
+                       font=('Segoe UI', 9))
         
         style.configure('Settings.Title.TLabel',
                        background=self.colors['bg'],
@@ -150,6 +263,12 @@ class SettingsDialog(tk.Toplevel):
         style.map('Settings.TRadiobutton',
                  background=[('active', self.colors['bg']), ('!active', self.colors['bg'])],
                  foreground=[('active', self.colors['text']), ('!active', self.colors['text'])])
+        
+        # Card style for sections
+        style.configure('Settings.Card.TFrame',
+                       background=self.colors['card_bg'],
+                       relief='flat',
+                       borderwidth=1)
         
         # Create scrollable frame for settings
         canvas = tk.Canvas(self, bg=self.colors['bg'], highlightthickness=0)
@@ -204,7 +323,7 @@ class SettingsDialog(tk.Toplevel):
         current_row += 1
         
         # API Keys Section - Dynamic based on selected provider
-        self.api_keys_frame = ttk.Frame(main_frame, style='Settings.TFrame')
+        self.api_keys_frame = ttk.Frame(main_frame, style='Settings.Card.TFrame', padding="15")
         self.api_keys_frame.grid(row=current_row, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(10, 0))
         self.api_keys_frame.columnconfigure(1, weight=1)
         current_row += 1
@@ -248,7 +367,7 @@ class SettingsDialog(tk.Toplevel):
         button_frame.grid(row=current_row, column=0, columnspan=2, pady=(30, 0))
         
         ttk.Button(button_frame,
-                  text="Save",
+                  text="Save Chat",
                   command=self.save_settings,
                   style='Settings.TButton').grid(row=0, column=0, padx=5)
         
@@ -275,7 +394,7 @@ class SettingsDialog(tk.Toplevel):
         # Header
         header = ttk.Label(self.api_keys_frame,
                           text="API Configuration",
-                          style='Settings.Header.TLabel')
+                          style='Settings.CardHeader.TLabel')
         header.grid(row=row, column=0, columnspan=2, sticky=tk.W, pady=(0, 10))
         row += 1
         
@@ -284,24 +403,24 @@ class SettingsDialog(tk.Toplevel):
         # Show fields based on selected provider
         if selected_provider == 'azure':
             # Azure needs endpoint, deployment, and API key
-            ttk.Label(self.api_keys_frame, text="Azure Endpoint:", style='Settings.TLabel').grid(row=row, column=0, sticky=tk.W, pady=5)
+            ttk.Label(self.api_keys_frame, text="Azure Endpoint:", style='Settings.CardText.TLabel').grid(row=row, column=0, sticky=tk.W, pady=5)
             self.azure_endpoint_var = tk.StringVar(value=self.current_config.get('azure_endpoint', ''))
             ttk.Entry(self.api_keys_frame, textvariable=self.azure_endpoint_var, width=50, style='Settings.TEntry').grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5)
             row += 1
             
-            ttk.Label(self.api_keys_frame, text="Deployment Name:", style='Settings.TLabel').grid(row=row, column=0, sticky=tk.W, pady=5)
+            ttk.Label(self.api_keys_frame, text="Deployment Name:", style='Settings.CardText.TLabel').grid(row=row, column=0, sticky=tk.W, pady=5)
             self.azure_deployment_var = tk.StringVar(value=self.current_config.get('azure_deployment', ''))
             ttk.Entry(self.api_keys_frame, textvariable=self.azure_deployment_var, width=50, style='Settings.TEntry').grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5)
             row += 1
             
-            ttk.Label(self.api_keys_frame, text="API Key:", style='Settings.TLabel').grid(row=row, column=0, sticky=tk.W, pady=5)
+            ttk.Label(self.api_keys_frame, text="API Key:", style='Settings.CardText.TLabel').grid(row=row, column=0, sticky=tk.W, pady=5)
             self.azure_key_var = tk.StringVar(value=self.current_config.get('azure_api_key', ''))
             ttk.Entry(self.api_keys_frame, textvariable=self.azure_key_var, width=50, show="*", style='Settings.TEntry').grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5)
             row += 1
         else:
             # Standard API key for other providers
             provider_name = self.providers[selected_provider]['name']
-            ttk.Label(self.api_keys_frame, text=f"{provider_name} API Key:", style='Settings.TLabel').grid(row=row, column=0, sticky=tk.W, pady=5)
+            ttk.Label(self.api_keys_frame, text=f"{provider_name} API Key:", style='Settings.CardText.TLabel').grid(row=row, column=0, sticky=tk.W, pady=5)
             
             # Use existing var (already created in __init__)
             key_var = getattr(self, f'{selected_provider}_key_var')
@@ -311,7 +430,7 @@ class SettingsDialog(tk.Toplevel):
             # Model selection
             models = self.providers[selected_provider]['models']
             if models:
-                ttk.Label(self.api_keys_frame, text="Model:", style='Settings.TLabel').grid(row=row, column=0, sticky=tk.W, pady=5)
+                ttk.Label(self.api_keys_frame, text="Model:", style='Settings.CardText.TLabel').grid(row=row, column=0, sticky=tk.W, pady=5)
                 
                 # Use existing var (already created in __init__)
                 model_var = getattr(self, f'{selected_provider}_model_var')
@@ -522,13 +641,13 @@ class GarminChatApp:
                     if self.gemini_model in model_migrations:
                         old_model = self.gemini_model
                         self.gemini_model = model_migrations[old_model]
-                        logger.info(f"Auto-migrated Gemini model: {old_model} → {self.gemini_model}")
+                        logger.info(f"Auto-migrated Gemini model: {old_model} â†’ {self.gemini_model}")
                     
                     # Migrate xAI model if deprecated
                     if self.xai_model in model_migrations:
                         old_model = self.xai_model
                         self.xai_model = model_migrations[old_model]
-                        logger.info(f"Auto-migrated xAI model: {old_model} → {self.xai_model}")
+                        logger.info(f"Auto-migrated xAI model: {old_model} â†’ {self.xai_model}")
                     
                     # Garmin settings
                     self.garmin_email = config.get('garmin_email', '')
@@ -735,6 +854,23 @@ class GarminChatApp:
                            ('pressed', self.colors['accent_hover'])],
                  foreground=[('active', 'white'), ('pressed', 'white')])
         
+        # Quick Question button (rounded hover effect)
+        style.configure('QuickQuestion.TButton',
+                       background=self.colors['card_bg'],
+                       foreground=self.colors['text'],
+                       bordercolor=self.colors['border'],
+                       borderwidth=1,
+                       relief='flat',
+                       padding=(12, 8),
+                       font=('Segoe UI', 10))
+        style.map('QuickQuestion.TButton',
+                 background=[('active', self.colors['accent_light']), 
+                           ('pressed', self.colors['accent'])],
+                 foreground=[('active', self.colors['accent']),
+                           ('pressed', 'white')],
+                 relief=[('active', 'raised'),  # Gives a subtle rounded effect
+                        ('pressed', 'sunken')])
+        
         # Label styles
         style.configure('Title.TLabel',
                        background=self.colors['bg'],
@@ -824,14 +960,37 @@ class GarminChatApp:
         # Row 0: Header Card
         header_card = ttk.Frame(main_frame, style='Card.TFrame', padding="20")
         header_card.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=(0, 15))
-        header_card.columnconfigure(0, weight=1)
+        header_card.columnconfigure(1, weight=1)
         
-        title_label = ttk.Label(header_card, 
+        # Try to load and display app icon
+        self.logo_photo = None
+        try:
+            if getattr(sys, 'frozen', False):
+                base_path = Path(sys._MEIPASS)
+            else:
+                base_path = Path(__file__).parent
+            
+            logo_path = base_path / "logo.png"
+            if logo_path.exists():
+                from PIL import Image, ImageTk
+                img = Image.open(logo_path)
+                img = img.resize((48, 48), Image.Resampling.LANCZOS)
+                self.logo_photo = ImageTk.PhotoImage(img)
+                logo_label = tk.Label(header_card, image=self.logo_photo, bg=self.colors['card_bg'])
+                logo_label.grid(row=0, column=0, rowspan=2, padx=(0, 15))
+        except Exception as e:
+            logger.debug(f"Could not load app logo: {e}")
+        
+        # Title and subtitle container
+        text_container = ttk.Frame(header_card, style='Card.TFrame')
+        text_container.grid(row=0, column=1, rowspan=2, sticky=(tk.W, tk.N))
+        
+        title_label = ttk.Label(text_container, 
                                text="Garmin Chat",
                                style='Title.TLabel')
         title_label.grid(row=0, column=0, sticky=tk.W)
         
-        subtitle_label = ttk.Label(header_card,
+        subtitle_label = ttk.Label(text_container,
                                   text="AI-powered insights for your fitness data",
                                   foreground=self.colors['text_secondary'],
                                   background=self.colors['card_bg'],
@@ -840,21 +999,21 @@ class GarminChatApp:
         
         # Right side buttons - larger icons
         button_container = ttk.Frame(header_card, style='Card.TFrame')
-        button_container.grid(row=0, column=1, rowspan=2, padx=(10, 0))
+        button_container.grid(row=0, column=2, rowspan=2, padx=(10, 0))
         
         search_btn = ttk.Button(button_container,
-                               text="🔍",
+                               text="🔍",
                                command=self.open_search,
                                style='Modern.TButton',
-                               width=4)
+                               width=3)
         search_btn.grid(row=0, column=0, padx=3)
         self.create_tooltip(search_btn, "Search chat history")
         
         theme_btn = ttk.Button(button_container,
-                              text="🌙",
+                              text="◐",
                               command=self.toggle_theme,
                               style='Modern.TButton',
-                              width=4)
+                              width=3)
         theme_btn.grid(row=0, column=1, padx=3)
         self.create_tooltip(theme_btn, "Toggle dark mode")
         
@@ -865,12 +1024,20 @@ class GarminChatApp:
         settings_btn.grid(row=0, column=2, padx=3)
         self.create_tooltip(settings_btn, "Settings")
         
+        # Version label below Settings button
+        version_label = ttk.Label(button_container,
+                                 text=f"v{APP_VERSION}",
+                                 foreground=self.colors['text_secondary'],
+                                 background=self.colors['card_bg'],
+                                 font=('Segoe UI', 8))
+        version_label.grid(row=1, column=2, sticky=tk.E, padx=3)
+        
         # Row 1: Control buttons card
         control_card = ttk.Frame(main_frame, style='Card.TFrame', padding="15")
         control_card.grid(row=1, column=0, sticky=(tk.W, tk.E), pady=(0, 15))
         
         self.connect_btn = ttk.Button(control_card,
-                                     text="🔌 Connect to Garmin",
+                                     text="▶ Connect to Garmin",
                                      command=self.connect_to_garmin,
                                      style='Accent.TButton')
         self.connect_btn.grid(row=0, column=0, padx=(0, 8))
@@ -884,7 +1051,7 @@ class GarminChatApp:
         self.create_tooltip(self.refresh_btn, "Refresh Garmin data")
         
         self.reset_btn = ttk.Button(control_card,
-                                   text="🗑️ Reset",
+                                   text="↺ Reset",
                                    command=self.reset_chat,
                                    style='Modern.TButton',
                                    state=tk.DISABLED)
@@ -892,14 +1059,14 @@ class GarminChatApp:
         self.create_tooltip(self.reset_btn, "Clear chat history")
         
         self.save_prompts_btn = ttk.Button(control_card,
-                                          text="💾 Prompts",
+                                          text="📝 Prompts",
                                           command=self.open_saved_prompts,
                                           style='Modern.TButton')
         self.save_prompts_btn.grid(row=0, column=3, padx=4)
         self.create_tooltip(self.save_prompts_btn, "Manage saved prompts")
         
         self.save_chat_btn = ttk.Button(control_card,
-                                       text="💾 Save",
+                                       text="💾 Save Chat",
                                        command=self.save_chat_history,
                                        style='Modern.TButton',
                                        state=tk.DISABLED)
@@ -916,17 +1083,16 @@ class GarminChatApp:
         # Favorite button removed - feature was non-functional
         
         self.export_btn = ttk.Button(control_card,
-                                     text="📄",
+                                     text="📄 Export Report",
                                      command=self.export_conversation_report,
                                      style='Modern.TButton',
-                                     width=4,
                                      state=tk.DISABLED)
         self.export_btn.grid(row=0, column=6, padx=(4, 0))
-        self.create_tooltip(self.export_btn, "Export report")
+        self.create_tooltip(self.export_btn, "Export conversation as PDF, DOCX, or TXT")
         
         # Status label
         self.status_label = ttk.Label(control_card,
-                                     text="⚪  Not connected",
+                                     text="âšª  Not connected",
                                      style='Status.TLabel')
         self.status_label.grid(row=1, column=0, columnspan=7, sticky=tk.W, pady=(10, 0))
         
@@ -1047,32 +1213,44 @@ class GarminChatApp:
         self.message_entry.bind('<Control-Key-Return>', lambda e: self.send_message())
         self.message_entry.config(state=tk.DISABLED)
         
-        # Row 5: Example questions card (moved up from row 7)
-        examples_card = ttk.LabelFrame(main_frame, 
-                                      text="Quick Questions", 
-                                      style='Card.TLabelframe',
-                                      padding="15")
-        examples_card.grid(row=5, column=0, sticky=(tk.W, tk.E), pady=(15, 0))
-        examples_card.columnconfigure(0, weight=1)
-        examples_card.columnconfigure(1, weight=1)
+        # Row 5: Quick Questions card with customization
+        quick_q_header = ttk.Frame(main_frame, style='Card.TFrame', padding="15 15 15 5")
+        quick_q_header.grid(row=5, column=0, sticky=(tk.W, tk.E), pady=(15, 0))
+        quick_q_header.columnconfigure(0, weight=1)
         
-        examples = [
-            "How many steps did I take today?",
-            "What was my last workout?",
-            "How did I sleep last night?",
-            "Show me my recent activities",
-        ]
+        ttk.Label(quick_q_header,
+                 text="Quick Questions",
+                 style='Heading.TLabel').grid(row=0, column=0, sticky=tk.W)
         
-        for i, example in enumerate(examples):
-            btn = ttk.Button(examples_card,
-                           text=example,
-                           style='Modern.TButton',
-                           command=lambda q=example: self.use_example(q))
-            btn.grid(row=i//2, column=i%2, padx=6, pady=6, sticky=(tk.W, tk.E))
+        ttk.Button(quick_q_header,
+                  text="⚙️ Customize",
+                  command=self.customize_quick_questions,
+                  style='Modern.TButton',
+                  width=12).grid(row=0, column=1, sticky=tk.E)
+        
+        # Quick questions buttons container
+        self.examples_card = ttk.Frame(main_frame, style='Card.TFrame', padding="15 5 15 15")
+        self.examples_card.grid(row=6, column=0, sticky=(tk.W, tk.E))
+        self.examples_card.columnconfigure(0, weight=1)
+        self.examples_card.columnconfigure(1, weight=1)
+        
+        # Load and display quick questions
+        self.load_quick_questions()
         
     def add_message(self, sender, message, tag='user'):
         """Add a message to the chat display"""
         self.chat_display.config(state=tk.NORMAL)
+        
+        # Ensure message is properly decoded as UTF-8
+        if isinstance(message, bytes):
+            message = message.decode('utf-8', errors='replace')
+        
+        # Clean up any corrupted bullet points in the message
+        message = message.replace('â€¢', '•')  # Fix corrupted bullets
+        message = message.replace('â€"', '—')  # Fix em dash
+        message = message.replace('â€™', "'")  # Fix apostrophe
+        message = message.replace('â€œ', '"')  # Fix opening quote
+        message = message.replace('â€', '"')   # Fix closing quote
         
         # Add timestamp
         timestamp = datetime.now().strftime("%H:%M")
@@ -1370,11 +1548,11 @@ class GarminChatApp:
                 self.root.after(0, lambda: self._show_mfa_input())
             else:
                 error_msg = result.get('error', 'Unknown error')
-                self.root.after(0, lambda: self.update_status(f"âŒ {error_msg}", True))
+                self.root.after(0, lambda: self.update_status(f"❌ {error_msg}", True))
                 self.root.after(0, lambda: self.connect_btn.config(state=tk.NORMAL))
                 
         except Exception as e:
-            self.root.after(0, lambda: self.update_status(f"âŒ Error: {str(e)}", True))
+            self.root.after(0, lambda: self.update_status(f"❌ Error: {str(e)}", True))
             self.root.after(0, lambda: self.connect_btn.config(state=tk.NORMAL))
             
     def _show_mfa_input(self):
@@ -1388,7 +1566,7 @@ class GarminChatApp:
         mfa_code = self.mfa_entry.get().strip()
         
         if not mfa_code or len(mfa_code) != 6:
-            self.update_status("âŒ Please enter a valid 6-digit MFA code", True)
+            self.update_status("❌ Please enter a valid 6-digit MFA code", True)
             return
             
         self.mfa_btn.config(state=tk.DISABLED)
@@ -1411,11 +1589,11 @@ class GarminChatApp:
                 self.root.after(0, lambda: self.mfa_frame.grid_remove())
             else:
                 error_msg = result.get('error', 'Unknown error')
-                self.root.after(0, lambda: self.update_status(f"âŒ {error_msg}", True))
+                self.root.after(0, lambda: self.update_status(f"❌ {error_msg}", True))
                 self.root.after(0, lambda: self.mfa_btn.config(state=tk.NORMAL))
                 
         except Exception as e:
-            self.root.after(0, lambda: self.update_status(f"âŒ Error: {str(e)}", True))
+            self.root.after(0, lambda: self.update_status(f"❌ Error: {str(e)}", True))
             self.root.after(0, lambda: self.mfa_btn.config(state=tk.NORMAL))
             
     def _on_auth_success(self):
@@ -1441,7 +1619,7 @@ class GarminChatApp:
     def send_message(self):
         """Send a message to the chatbot"""
         if not self.authenticated:
-            self.update_status("âŒ Please connect to Garmin first", True)
+            self.update_status("❌ Please connect to Garmin first", True)
             return
             
         # Get message from Text widget
@@ -1671,12 +1849,54 @@ class GarminChatApp:
     def use_example(self, question):
         """Use an example question"""
         if not self.authenticated:
-            self.update_status("âŒ Please connect to Garmin first", True)
+            self.update_status("❌ Please connect to Garmin first", True)
             return
             
         self.message_entry.delete("1.0", tk.END)
         self.message_entry.insert("1.0", question)
         self.send_message()
+    
+    def load_quick_questions(self):
+        """Load and display quick questions (default or custom)"""
+        # Clear existing buttons
+        for widget in self.examples_card.winfo_children():
+            widget.destroy()
+        
+        # Load custom questions or use defaults
+        quick_questions_file = self.config_dir / "quick_questions.json"
+        
+        try:
+            if quick_questions_file.exists():
+                with open(quick_questions_file, 'r') as f:
+                    questions = json.load(f)
+            else:
+                # Default questions
+                questions = [
+                    "How many steps did I take today?",
+                    "What was my last workout?",
+                    "How did I sleep last night?",
+                    "Show me my recent activities",
+                ]
+        except Exception as e:
+            logger.error(f"Error loading quick questions: {e}")
+            questions = [
+                "How many steps did I take today?",
+                "What was my last workout?",
+                "How did I sleep last night?",
+                "Show me my recent activities",
+            ]
+        
+        # Create buttons with rounded hover effect
+        for i, question in enumerate(questions[:8]):  # Max 8 questions (4x2 grid)
+            btn = ttk.Button(self.examples_card,
+                           text=question,
+                           style='QuickQuestion.TButton',
+                           command=lambda q=question: self.use_example(q))
+            btn.grid(row=i//2, column=i%2, padx=6, pady=6, sticky=(tk.W, tk.E))
+    
+    def customize_quick_questions(self):
+        """Open dialog to customize quick questions"""
+        CustomizeQuestionsDialog(self.root, self)
         
     def refresh_data(self):
         """Refresh Garmin data"""
@@ -1702,9 +1922,9 @@ class GarminChatApp:
                 self.root.after(0, lambda: self.update_status("🔐 MFA Required: Enter your 6-digit code", False))
             else:
                 error_msg = result.get('error', 'Unknown error')
-                self.root.after(0, lambda: self.update_status(f"âŒ {error_msg}", True))
+                self.root.after(0, lambda: self.update_status(f"❌ {error_msg}", True))
         except Exception as e:
-            self.root.after(0, lambda: self.update_status(f"âŒ Error: {str(e)}", True))
+            self.root.after(0, lambda: self.update_status(f"❌ Error: {str(e)}", True))
         finally:
             self.root.after(0, lambda: self.refresh_btn.config(state=tk.NORMAL))
             
@@ -1853,7 +2073,7 @@ class GarminChatApp:
         button_frame = ttk.Frame(frame)
         button_frame.grid(row=3, column=0, columnspan=2, pady=(20, 0))
         
-        ttk.Button(button_frame, text="Save", command=save_with_name, width=10).grid(row=0, column=0, padx=5)
+        ttk.Button(button_frame, text="Save Chat", command=save_with_name, width=10).grid(row=0, column=0, padx=5)
         ttk.Button(button_frame, text="Cancel", command=cancel, width=10).grid(row=0, column=1, padx=5)
         
         # Bind Enter key to save
@@ -1998,6 +2218,23 @@ class GarminChatApp:
                            ('pressed', self.colors['accent_hover'])],
                  foreground=[('active', 'white'), ('pressed', 'white')])
         
+        # Quick Question button style
+        style.configure('QuickQuestion.TButton',
+                       background=self.colors['card_bg'],
+                       foreground=self.colors['text'],
+                       bordercolor=self.colors['border'],
+                       borderwidth=1,
+                       relief='flat',
+                       padding=(12, 8),
+                       font=('Segoe UI', 10))
+        style.map('QuickQuestion.TButton',
+                 background=[('active', self.colors['accent_light']), 
+                           ('pressed', self.colors['accent'])],
+                 foreground=[('active', self.colors['accent']),
+                           ('pressed', 'white')],
+                 relief=[('active', 'raised'),
+                        ('pressed', 'sunken')])
+        
         # LabelFrame style
         style.configure('Card.TLabelframe',
                        background=self.colors['card_bg'],
@@ -2119,7 +2356,7 @@ class GarminChatApp:
             suggestions.append("Check your heart rate trends")
         
         if suggestions:
-            suggestion_text = "💡 " + " • ".join(suggestions[:2])
+            suggestion_text = "Ὂ1 " + " • ".join(suggestions[:2])
             self.suggestions_label.config(text=suggestion_text)
         else:
             self.suggestions_frame.grid_remove()
@@ -2193,6 +2430,189 @@ class GarminChatApp:
         tooltip = ToolTip(widget, text)
 
 
+class CustomizeQuestionsDialog(tk.Toplevel):
+    """Dialog for customizing quick questions"""
+    
+    def __init__(self, parent, app):
+        super().__init__(parent)
+        
+        # Make transient first
+        self.transient(parent)
+        
+        self.title("Customize Quick Questions")
+        self.app = app
+        
+        # Calculate centered position
+        width = 700
+        height = 550
+        x = parent.winfo_x() + (parent.winfo_width() // 2) - (width // 2)
+        y = parent.winfo_y() + (parent.winfo_height() // 2) - (height // 2)
+        self.geometry(f"{width}x{height}+{x}+{y}")
+        self.withdraw()
+        
+        # Apply colors
+        self.colors = app.colors
+        self.configure(bg=self.colors['bg'])
+        
+        # Set icon
+        try:
+            if getattr(sys, 'frozen', False):
+                base_path = Path(sys._MEIPASS)
+            else:
+                base_path = Path(__file__).parent
+            icon_path = base_path / "logo.ico"
+            if icon_path.exists():
+                self.iconbitmap(str(icon_path))
+        except Exception as e:
+            logger.debug(f"Could not load Customize Questions dialog icon: {e}")
+        
+        # Main frame
+        main_frame = ttk.Frame(self, padding="20", style='TFrame')
+        main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+        main_frame.columnconfigure(0, weight=1)
+        main_frame.rowconfigure(1, weight=1)
+        
+        # Title
+        ttk.Label(main_frame,
+                 text="⚙️ Customize Quick Questions",
+                 font=('Segoe UI', 14, 'bold'),
+                 background=self.colors['bg'],
+                 foreground=self.colors['text']).grid(row=0, column=0, sticky=tk.W, pady=(0, 15))
+        
+        # Instructions
+        ttk.Label(main_frame,
+                 text="Add up to 8 quick questions (one per line). Leave blank to use defaults.",
+                 font=('Segoe UI', 9),
+                 background=self.colors['bg'],
+                 foreground=self.colors['text_secondary']).grid(row=1, column=0, sticky=tk.W, pady=(0, 10))
+        
+        # Text area for questions
+        text_frame = ttk.Frame(main_frame, style='Card.TFrame')
+        text_frame.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), pady=(0, 15))
+        text_frame.columnconfigure(0, weight=1)
+        text_frame.rowconfigure(0, weight=1)
+        
+        self.questions_text = tk.Text(text_frame,
+                                     height=15,
+                                     font=('Segoe UI', 10),
+                                     wrap=tk.WORD,
+                                     relief=tk.FLAT,
+                                     borderwidth=0,
+                                     padx=10,
+                                     pady=10,
+                                     bg=self.colors['card_bg'],
+                                     fg=self.colors['text'],
+                                     insertbackground=self.colors['accent'])
+        self.questions_text.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        
+        # Scrollbar
+        scrollbar = ttk.Scrollbar(text_frame, orient=tk.VERTICAL, command=self.questions_text.yview)
+        scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
+        self.questions_text.config(yscrollcommand=scrollbar.set)
+        
+        # Load current questions
+        self.load_questions()
+        
+        # Buttons
+        button_frame = ttk.Frame(main_frame, style='TFrame')
+        button_frame.grid(row=3, column=0, pady=(0, 0))
+        
+        ttk.Button(button_frame,
+                  text="💾 Save",
+                  command=self.save_questions,
+                  style='Accent.TButton').grid(row=0, column=0, padx=5)
+        
+        ttk.Button(button_frame,
+                  text="↺ Reset to Defaults",
+                  command=self.reset_to_defaults,
+                  style='Modern.TButton').grid(row=0, column=1, padx=5)
+        
+        ttk.Button(button_frame,
+                  text="Cancel",
+                  command=self.destroy,
+                  style='Modern.TButton').grid(row=0, column=2, padx=5)
+        
+        # Show window
+        self.deiconify()
+        self.grab_set()
+    
+    def load_questions(self):
+        """Load current questions into text area"""
+        quick_questions_file = self.app.config_dir / "quick_questions.json"
+        
+        try:
+            if quick_questions_file.exists():
+                with open(quick_questions_file, 'r') as f:
+                    questions = json.load(f)
+            else:
+                questions = [
+                    "How many steps did I take today?",
+                    "What was my last workout?",
+                    "How did I sleep last night?",
+                    "Show me my recent activities",
+                ]
+        except Exception as e:
+            logger.error(f"Error loading questions: {e}")
+            questions = []
+        
+        self.questions_text.delete("1.0", tk.END)
+        self.questions_text.insert("1.0", "\n".join(questions))
+    
+    def save_questions(self):
+        """Save custom questions"""
+        # Get text and split by lines
+        text = self.questions_text.get("1.0", tk.END).strip()
+        questions = [q.strip() for q in text.split('\n') if q.strip()]
+        
+        # Limit to 8 questions
+        if len(questions) > 8:
+            messagebox.showwarning(
+                "Too Many Questions",
+                f"Maximum 8 questions allowed. Only the first 8 will be saved.",
+                parent=self
+            )
+            questions = questions[:8]
+        
+        # Save to file
+        quick_questions_file = self.app.config_dir / "quick_questions.json"
+        
+        try:
+            with open(quick_questions_file, 'w') as f:
+                json.dump(questions, f, indent=2)
+            
+            # Reload questions in main window
+            self.app.load_quick_questions()
+            
+            messagebox.showinfo(
+                "Saved",
+                f"Saved {len(questions)} quick question(s)!",
+                parent=self
+            )
+            self.destroy()
+            
+        except Exception as e:
+            logger.error(f"Error saving questions: {e}")
+            messagebox.showerror(
+                "Save Error",
+                f"Failed to save questions: {e}",
+                parent=self
+            )
+    
+    def reset_to_defaults(self):
+        """Reset to default questions"""
+        defaults = [
+            "How many steps did I take today?",
+            "What was my last workout?",
+            "How did I sleep last night?",
+            "Show me my recent activities",
+        ]
+        
+        self.questions_text.delete("1.0", tk.END)
+        self.questions_text.insert("1.0", "\n".join(defaults))
+
+
 class ToolTip:
     """Simple tooltip class"""
     def __init__(self, widget, text):
@@ -2237,14 +2657,48 @@ class SavedPromptsDialog(tk.Toplevel):
     def __init__(self, parent, app):
         super().__init__(parent)
         self.title("Saved Prompts")
-        self.geometry("700x500")
         self.app = app
+        
+        # Calculate centered position BEFORE setting geometry
+        width = 700
+        height = 500
+        x = parent.winfo_x() + (parent.winfo_width() // 2) - (width // 2)
+        y = parent.winfo_y() + (parent.winfo_height() // 2) - (height // 2)
+        self.geometry(f"{width}x{height}+{x}+{y}")
+        self.withdraw()
+        
+        # Apply Fluent Design colors
+        self.colors = app.colors
+        self.configure(bg=self.colors['bg'])
+        # Set window icon
+        try:
+            if getattr(sys, 'frozen', False):
+                base_path = Path(sys._MEIPASS)
+            else:
+                base_path = Path(__file__).parent
+            
+            icon_path = base_path / "logo.ico"
+            if icon_path.exists():
+                self.iconbitmap(str(icon_path))
+        except Exception as e:
+            logger.debug(f"Could not load Saved Prompts dialog icon: {e}")
         
         # Make modal
         self.transient(parent)
-        self.grab_set()
         
-        main_frame = ttk.Frame(self, padding="20")
+        # Configure ttk styles for this dialog
+        style = ttk.Style()
+        style.configure('SavedPrompts.TFrame', background=self.colors['bg'])
+        style.configure('SavedPrompts.Card.TFrame', background=self.colors['card_bg'])
+        style.configure('SavedPrompts.TLabel', 
+                       background=self.colors['bg'], 
+                       foreground=self.colors['text'])
+        style.configure('SavedPrompts.Title.TLabel',
+                       background=self.colors['bg'],
+                       foreground=self.colors['text'],
+                       font=('Segoe UI', 14, 'bold'))
+        
+        main_frame = ttk.Frame(self, padding="20", style='SavedPrompts.TFrame')
         main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
@@ -2252,17 +2706,25 @@ class SavedPromptsDialog(tk.Toplevel):
         main_frame.rowconfigure(1, weight=1)
         
         # Title
-        title = ttk.Label(main_frame, text="Saved Prompts", font=('Segoe UI', 14, 'bold'))
+        title = ttk.Label(main_frame, text="Prompts", style='SavedPrompts.Title.TLabel')
         title.grid(row=0, column=0, sticky=tk.W, pady=(0, 15))
         
         # Prompts list
-        list_frame = ttk.Frame(main_frame)
+        list_frame = ttk.Frame(main_frame, style='SavedPrompts.Card.TFrame')
         list_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), pady=(0, 15))
         list_frame.columnconfigure(0, weight=1)
         list_frame.rowconfigure(0, weight=1)
         
-        # Scrolled listbox
-        self.prompts_listbox = tk.Listbox(list_frame, font=('Segoe UI', 10), height=15)
+        # Scrolled listbox with Fluent Design colors
+        self.prompts_listbox = tk.Listbox(list_frame, 
+                                          font=('Segoe UI', 10), 
+                                          height=15,
+                                          bg=self.colors['card_bg'],
+                                          fg=self.colors['text'],
+                                          selectbackground=self.colors['accent'],
+                                          selectforeground='white',
+                                          relief=tk.FLAT,
+                                          borderwidth=0)
         self.prompts_listbox.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
         scrollbar = ttk.Scrollbar(list_frame, orient=tk.VERTICAL, command=self.prompts_listbox.yview)
@@ -2273,12 +2735,14 @@ class SavedPromptsDialog(tk.Toplevel):
         button_frame = ttk.Frame(main_frame)
         button_frame.grid(row=2, column=0, pady=(0, 10))
         
-        ttk.Button(button_frame, text="➕ New Prompt", command=self.new_prompt).grid(row=0, column=0, padx=5)
-        ttk.Button(button_frame, text="✏️ Use Selected", command=self.use_prompt).grid(row=0, column=1, padx=5)
-        ttk.Button(button_frame, text="🗑️ Delete", command=self.delete_prompt).grid(row=0, column=2, padx=5)
+        ttk.Button(button_frame, text="New Prompt", command=self.new_prompt).grid(row=0, column=0, padx=5)
+        ttk.Button(button_frame, text="Use Selected", command=self.use_prompt).grid(row=0, column=1, padx=5)
+        ttk.Button(button_frame, text="Delete", command=self.delete_prompt).grid(row=0, column=2, padx=5)
         ttk.Button(button_frame, text="Close", command=self.destroy).grid(row=0, column=3, padx=5)
         
         self.load_prompts()
+        self.deiconify()
+        self.grab_set()
     
     def load_prompts(self):
         """Load and display saved prompts"""
@@ -2327,7 +2791,7 @@ class SavedPromptsDialog(tk.Toplevel):
         button_frame = ttk.Frame(frame)
         button_frame.grid(row=3, column=0, columnspan=2, pady=(15, 0))
         
-        ttk.Button(button_frame, text="Save", command=save).grid(row=0, column=0, padx=5)
+        ttk.Button(button_frame, text="Save Chat", command=save).grid(row=0, column=0, padx=5)
         ttk.Button(button_frame, text="Cancel", command=dialog.destroy).grid(row=0, column=1, padx=5)
     
     def use_prompt(self):
@@ -2370,8 +2834,31 @@ class SearchDialog(tk.Toplevel):
     def __init__(self, parent, app):
         super().__init__(parent)
         self.title("Search Chat History")
-        self.geometry("700x500")
         self.app = app
+        
+        # Calculate centered position BEFORE setting geometry
+        width = 700
+        height = 500
+        x = parent.winfo_x() + (parent.winfo_width() // 2) - (width // 2)
+        y = parent.winfo_y() + (parent.winfo_height() // 2) - (height // 2)
+        self.geometry(f"{width}x{height}+{x}+{y}")
+        
+        # Apply Fluent Design colors
+        self.colors = app.colors
+        self.configure(bg=self.colors['bg'])
+        
+        # Set window icon
+        try:
+            if getattr(sys, 'frozen', False):
+                base_path = Path(sys._MEIPASS)
+            else:
+                base_path = Path(__file__).parent
+            
+            icon_path = base_path / "logo.ico"
+            if icon_path.exists():
+                self.iconbitmap(str(icon_path))
+        except Exception as e:
+            logger.debug(f"Could not load Search dialog icon: {e}")
         
         self.transient(parent)
         self.grab_set()
@@ -2384,15 +2871,15 @@ class SearchDialog(tk.Toplevel):
         main_frame.rowconfigure(2, weight=1)
         
         # Title
-        ttk.Label(main_frame, text="🔍 Search Chat History", 
+        ttk.Label(main_frame, text="History", 
                  font=('Segoe UI', 14, 'bold')).grid(row=0, column=0, sticky=tk.W, pady=(0, 15))
         
         # Search box
-        search_frame = ttk.Frame(main_frame)
+        search_frame = ttk.Frame(main_frame, style='Search.Card.TFrame', padding="15")
         search_frame.grid(row=1, column=0, sticky=(tk.W, tk.E), pady=(0, 15))
         search_frame.columnconfigure(0, weight=1)
         
-        self.search_entry = ttk.Entry(search_frame, font=('Segoe UI', 10))
+        self.search_entry = ttk.Entry(search_frame, font=('Segoe UI', 10), style='Modern.TEntry')
         self.search_entry.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=(0, 10))
         self.search_entry.bind('<Return>', lambda e: self.perform_search())
         
@@ -2408,7 +2895,13 @@ class SearchDialog(tk.Toplevel):
         self.results_text = scrolledtext.ScrolledText(results_frame,
                                                       wrap=tk.WORD,
                                                       font=('Segoe UI', 9),
-                                                      state=tk.DISABLED)
+                                                      state=tk.DISABLED,
+                                                      bg=self.colors['card_bg'],
+                                                      fg=self.colors['text'],
+                                                      relief=tk.FLAT,
+                                                      borderwidth=0,
+                                                      padx=15,
+                                                      pady=15)
         self.results_text.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
         # Close button
@@ -2467,12 +2960,20 @@ class ExportReportDialog(tk.Toplevel):
     
     def __init__(self, parent, app):
         super().__init__(parent)
+        
+        # Make transient first
+        self.transient(parent)
+        
         self.title("Export Report")
-        self.geometry("500x400")
         self.app = app
         
-        self.transient(parent)
-        self.grab_set()
+        # Calculate centered position
+        width = 500
+        height = 400
+        x = parent.winfo_x() + (parent.winfo_width() // 2) - (width // 2)
+        y = parent.winfo_y() + (parent.winfo_height() // 2) - (height // 2)
+        self.geometry(f"{width}x{height}+{x}+{y}")
+        self.withdraw()
         
         main_frame = ttk.Frame(self, padding="20")
         main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
@@ -2516,6 +3017,10 @@ class ExportReportDialog(tk.Toplevel):
                   command=self.export_report).grid(row=0, column=0, padx=5)
         ttk.Button(button_frame, text="Cancel", 
                   command=self.destroy).grid(row=0, column=1, padx=5)
+        
+        # Show window after all widgets created
+        self.deiconify()
+        self.grab_set()
     
     def export_report(self):
         """Export the conversation in selected format"""
@@ -2663,9 +3168,22 @@ class ChatHistoryViewer(tk.Toplevel):
     
     def __init__(self, parent, app):
         super().__init__(parent)
+        
+        # Make transient FIRST
+        self.transient(parent)
+        
         self.title("Chat History")
-        self.geometry("900x650")
         self.app = app
+        
+        # Calculate centered position BEFORE setting geometry
+        width = 900
+        height = 650
+        x = parent.winfo_x() + (parent.winfo_width() // 2) - (width // 2)
+        y = parent.winfo_y() + (parent.winfo_height() // 2) - (height // 2)
+        self.geometry(f"{width}x{height}+{x}+{y}")
+        
+        # Withdraw immediately after geometry to prevent flash
+        self.withdraw()
         
         # Set window icon (same as main window)
         try:
@@ -2683,12 +3201,33 @@ class ChatHistoryViewer(tk.Toplevel):
         except Exception as e:
             logger.debug(f"Could not load Chat History dialog icon: {e}")
         
-        # Make modal
-        self.transient(parent)
-        self.grab_set()
+        # Apply Fluent Design colors
+        self.colors = app.colors
+        self.configure(bg=self.colors['bg'])
+        
+        # Configure ttk styles
+        style = ttk.Style()
+        style.configure('History.TFrame', background=self.colors['bg'])
+        style.configure('History.Card.TLabelframe',
+                       background=self.colors['card_bg'],
+                       foreground=self.colors['text'],
+                       bordercolor=self.colors['border'],
+                       borderwidth=1,
+                       relief='flat')
+        style.configure('History.Card.TLabelframe.Label',
+                       background=self.colors['card_bg'],
+                       foreground=self.colors['text'],
+                       font=('Segoe UI', 10, 'bold'))
+        style.configure('History.TLabel',
+                       background=self.colors['bg'],
+                       foreground=self.colors['text'])
+        style.configure('History.Title.TLabel',
+                       background=self.colors['bg'],
+                       foreground=self.colors['text'],
+                       font=('Segoe UI', 14, 'bold'))
         
         # Main container with two columns
-        main_frame = ttk.Frame(self, padding="20")
+        main_frame = ttk.Frame(self, padding="20", style='History.TFrame')
         main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
@@ -2696,11 +3235,11 @@ class ChatHistoryViewer(tk.Toplevel):
         main_frame.rowconfigure(1, weight=1)
         
         # Title
-        title = ttk.Label(main_frame, text="Saved Chat History", font=('Segoe UI', 14, 'bold'))
+        title = ttk.Label(main_frame, text="History", style='History.Title.TLabel')
         title.grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(0, 15))
         
         # Left panel - Chat list
-        left_frame = ttk.LabelFrame(main_frame, text="Saved Chats", padding="10")
+        left_frame = ttk.LabelFrame(main_frame, text="Saved Chats", padding="10", style='History.Card.TLabelframe')
         left_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 10))
         left_frame.columnconfigure(0, weight=1)
         left_frame.rowconfigure(0, weight=1)
@@ -2711,7 +3250,15 @@ class ChatHistoryViewer(tk.Toplevel):
         list_frame.columnconfigure(0, weight=1)
         list_frame.rowconfigure(0, weight=1)
         
-        self.chat_listbox = tk.Listbox(list_frame, font=('Segoe UI', 9), width=30)
+        self.chat_listbox = tk.Listbox(list_frame, 
+                                       font=('Segoe UI', 9), 
+                                       width=30,
+                                       bg=self.colors['card_bg'],
+                                       fg=self.colors['text'],
+                                       selectbackground=self.colors['accent'],
+                                       selectforeground='white',
+                                       relief=tk.FLAT,
+                                       borderwidth=0)
         self.chat_listbox.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         self.chat_listbox.bind('<<ListboxSelect>>', self.on_chat_select)
         
@@ -2720,13 +3267,17 @@ class ChatHistoryViewer(tk.Toplevel):
         self.chat_listbox.config(yscrollcommand=scrollbar.set)
         
         # Right panel - Chat viewer
-        right_frame = ttk.LabelFrame(main_frame, text="Chat Content", padding="10")
+        right_frame = ttk.LabelFrame(main_frame, text="Chat Content", padding="10", style='History.Card.TLabelframe')
         right_frame.grid(row=1, column=1, sticky=(tk.W, tk.E, tk.N, tk.S))
         right_frame.columnconfigure(0, weight=1)
         right_frame.rowconfigure(1, weight=1)
         
         # Chat info
-        self.info_label = ttk.Label(right_frame, text="Select a chat to view", font=('Segoe UI', 9))
+        self.info_label = ttk.Label(right_frame, 
+                                    text="Select a chat to view", 
+                                    font=('Segoe UI', 9),
+                                    background=self.colors['card_bg'],
+                                    foreground=self.colors['text_secondary'])
         self.info_label.grid(row=0, column=0, sticky=tk.W, pady=(0, 5))
         
         # Chat content display
@@ -2734,7 +3285,10 @@ class ChatHistoryViewer(tk.Toplevel):
                                                       wrap=tk.WORD,
                                                       font=('Segoe UI', 9),
                                                       state=tk.DISABLED,
-                                                      bg='#f8f9fa',
+                                                      bg=self.colors['card_bg'],
+                                                      fg=self.colors['text'],
+                                                      relief=tk.FLAT,
+                                                      borderwidth=0,
                                                       padx=10,
                                                       pady=10)
         self.chat_display.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
@@ -2750,13 +3304,15 @@ class ChatHistoryViewer(tk.Toplevel):
         button_frame.grid(row=2, column=0, columnspan=2, pady=(15, 0))
         
         ttk.Button(button_frame, text="Load Into Chat", command=self.load_into_current).grid(row=0, column=0, padx=5)
-        ttk.Button(button_frame, text="✏️ Rename", command=self.rename_chat).grid(row=0, column=1, padx=5)
-        ttk.Button(button_frame, text="🗑️ Delete", command=self.delete_chat).grid(row=0, column=2, padx=5)
-        ttk.Button(button_frame, text="📁 Open Folder", command=self.open_folder).grid(row=0, column=3, padx=5)
+        ttk.Button(button_frame, text="Rename", command=self.rename_chat).grid(row=0, column=1, padx=5)
+        ttk.Button(button_frame, text="Delete", command=self.delete_chat).grid(row=0, column=2, padx=5)
+        ttk.Button(button_frame, text="Open Folder", command=self.open_folder).grid(row=0, column=3, padx=5)
         ttk.Button(button_frame, text="Close", command=self.destroy).grid(row=0, column=4, padx=5)
         
         # Load chats
         self.load_chat_list()
+        self.deiconify()
+        self.grab_set()
     
     def load_chat_list(self):
         """Load list of saved chat files"""
@@ -2993,7 +3549,7 @@ class ChatHistoryViewer(tk.Toplevel):
         dialog.rowconfigure(0, weight=1)
         frame.columnconfigure(1, weight=1)
         
-        ttk.Label(frame, text="✏️ Rename Chat Session", 
+        ttk.Label(frame, text="âœï¸ Rename Chat Session", 
                  font=('Segoe UI', 12, 'bold')).grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(0, 15))
         
         ttk.Label(frame, text="New Name:", 
@@ -3065,7 +3621,7 @@ class ChatHistoryViewer(tk.Toplevel):
         button_frame = ttk.Frame(frame)
         button_frame.grid(row=2, column=0, columnspan=2, pady=(20, 0))
         
-        ttk.Button(button_frame, text="Save", command=save_rename, width=10).grid(row=0, column=0, padx=5)
+        ttk.Button(button_frame, text="Save Chat", command=save_rename, width=10).grid(row=0, column=0, padx=5)
         ttk.Button(button_frame, text="Cancel", command=cancel, width=10).grid(row=0, column=1, padx=5)
         
         # Bind Enter key to save
@@ -3096,12 +3652,41 @@ def main():
     """Main entry point"""
     print("\n" + "="*60)
     print("Garmin Chat - Desktop Application")
+    print(f"Version {APP_VERSION}")
     print("="*60)
     print("\nStarting application...")
     print("="*60 + "\n")
     
+    # Create hidden root window
     root = tk.Tk()
-    app = GarminChatApp(root)
+    root.withdraw()  # Hide main window initially
+    
+    # Show splash screen
+    splash = SplashScreen(root)
+    
+    def load_app():
+        """Load the main application"""
+        try:
+            splash.update_status("Initializing...")
+            root.update()
+            
+            # Create main app
+            splash.update_status("Loading configuration...")
+            app = GarminChatApp(root)
+            
+            # Close splash and show main window
+            splash.update_status("Ready!")
+            root.after(500, lambda: (splash.close(), root.deiconify()))
+            
+        except Exception as e:
+            splash.close()
+            root.deiconify()
+            messagebox.showerror("Startup Error", 
+                               f"Failed to start application:\n\n{e}")
+            root.destroy()
+    
+    # Load app after splash is shown
+    root.after(100, load_app)
     root.mainloop()
 
 
