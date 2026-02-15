@@ -11,11 +11,6 @@ This folder contains all official releases of Garmin Chat Desktop. Each release 
 - Size: ~XX MB
 - SHA256: `[hash will be added after build]`
 
-**Portable Version**
-- [GarminChatDesktop_v4.0.2_Portable.zip](v4.0.2/GarminChatDesktop_v4.0.2_Portable.zip)
-- Size: ~XX MB
-- No installation required - extract and run
-
 ### ✨ What's New in v4.0.2
 
 #### Custom Session Naming
