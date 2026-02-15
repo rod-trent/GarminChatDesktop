@@ -249,7 +249,7 @@ See [BUILD_GUIDE.md](BUILD_GUIDE.md) for detailed build instructions.
 - `python-docx` - Word document export
 - `reportlab` - PDF generation
 
-See [requirements.txt](requirements.txt) for complete list.
+See [requirements.txt](https://github.com/rod-trent/GarminChatDesktop/blob/main/Code/requirements-desktop.txt) for complete list.
 
 ---
 
@@ -303,13 +303,11 @@ Contributions are welcome! Here's how to help:
 5. Push: `git push origin feature/amazing-feature`
 6. Open Pull Request
 
-See [BUILD_GUIDE.md](BUILD_GUIDE.md) for development setup.
-
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see [LICENSE](https://github.com/rod-trent/GarminChatDesktop/blob/main/LICENSE) file for details.
 
 ---
 
