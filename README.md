@@ -7,13 +7,13 @@
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-![Garmin Chat Desktop](https://github.com/rod-trent/GarminChatDesktop/blob/main/AppImages/DarkMode.jpg?raw=true "Dark Mode Engaged")
-
 **AI-Powered Insights for Your Garmin Connect Data**
 
 Chat with your fitness data using natural language and get instant AI-powered analysis of your workouts, sleep, health metrics, and performance trends.
 
 [Download Latest](https://github.com/rod-trent/GarminChatDesktop/releases/latest) • [Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [Build Guide](BUILD_GUIDE.md)
+
+![Garmin Chat Desktop](https://github.com/rod-trent/GarminChatDesktop/blob/main/AppImages/DarkMode.jpg?raw=true "Dark Mode Engaged")
 
 </div>
 
