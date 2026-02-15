@@ -522,13 +522,13 @@ class GarminChatApp:
                     if self.gemini_model in model_migrations:
                         old_model = self.gemini_model
                         self.gemini_model = model_migrations[old_model]
-                        logger.info(f"Auto-migrated Gemini model: {old_model} â†’ {self.gemini_model}")
+                        logger.info(f"Auto-migrated Gemini model: {old_model} → {self.gemini_model}")
                     
                     # Migrate xAI model if deprecated
                     if self.xai_model in model_migrations:
                         old_model = self.xai_model
                         self.xai_model = model_migrations[old_model]
-                        logger.info(f"Auto-migrated xAI model: {old_model} â†’ {self.xai_model}")
+                        logger.info(f"Auto-migrated xAI model: {old_model} → {self.xai_model}")
                     
                     # Garmin settings
                     self.garmin_email = config.get('garmin_email', '')
@@ -1028,7 +1028,7 @@ class GarminChatApp:
         
         # Send button with modern accent style
         self.send_btn = ttk.Button(input_card,
-                                   text="Send â†’",
+                                   text="Send →",
                                    command=self.send_message,
                                    state=tk.DISABLED,
                                    style='Accent.TButton')
