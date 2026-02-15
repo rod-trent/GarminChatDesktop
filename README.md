@@ -15,7 +15,7 @@
 
 Garmin Chat Desktop is a local desktop chatbot that lets you interact with your Garmin Connect data using natural language. Ask questions about your workouts, sleep, steps, and activities in plain English and get intelligent AI-powered responses.
 
-[Download Latest](https://github.com/rod-trent/GarminChatDesktop/tree/main/Releases) • [Features](#-features) • [Installation](#-installation) • [Usage](#-usage)
+[Download Latest](https://github.com/rod-trent/GarminChatDesktop/tree/main/Releases) • [Features](#-features) • [Installation](#-installation)
 
 ![Garmin Chat Desktop](https://github.com/rod-trent/GarminChatDesktop/blob/main/AppImages/GarminChatDesktop.jpg?raw=true "Dark Mode Engaged")
 
@@ -70,17 +70,11 @@ Garmin Chat Desktop is a local desktop chatbot that lets you interact with your 
 
 ## 🚀 Installation
 
-### Option 1: Installer (Recommended)
+### Installer (Recommended)
 1. Download `GarminChatDesktop_v4.0.3_Setup.exe`
 2. Run the installer
 3. Follow the setup wizard
 4. Launch from Start Menu or Desktop shortcut
-
-### Option 2: Portable Executable
-1. Download `GarminChat.exe`
-2. Place in any folder
-3. Double-click to run
-4. No installation required!
 
 ---
 
@@ -378,15 +372,15 @@ A: Yes! Click **⚙️ Customize** next to Quick Questions to create your own.
 - **Feature Requests**: Submit on GitHub
 
 ### Community
-- **GitHub**: [github.com/yourusername/garmin-chat](https://github.com/yourusername/garmin-chat)
-- **Discussions**: GitHub Discussions
-- **Updates**: Check Releases page
+- **GitHub**: [github.com/yourusername/garmin-chat](https://github.com/rod-trent/garminchatdesktop)
+- **Discussions**: [GitHub Discussions](https://github.com/rod-trent/GarminChatDesktop/discussions)
+- **Updates**: [Check Releases page](https://github.com/rod-trent/GarminChatDesktop/tree/main/Releases)
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE.txt file for details.
+This project is licensed under the MIT License - see the [LICENSE.txt](https://github.com/rod-trent/GarminChatDesktop/blob/main/LICENSE) file for details.
 
 ---
 
