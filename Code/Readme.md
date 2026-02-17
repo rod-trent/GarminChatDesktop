@@ -276,7 +276,6 @@ This verifies:
 2. Switch to xAI, OpenAI, or Anthropic (recommended)
 3. Wait for SDK v0.3+ (more mature)
 
-See [GEMINI_TROUBLESHOOTING.md](../GEMINI_TROUBLESHOOTING.md) for details.
 
 ### Antivirus False Positives
 
