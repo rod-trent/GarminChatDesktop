@@ -4,7 +4,7 @@ A local desktop chatbot for querying Garmin Connect data.
 """
 
 # Application version
-APP_VERSION = "4.0.3"
+APP_VERSION = "4.1.0"
 
 import sys
 import tkinter as tk
@@ -183,6 +183,14 @@ class SettingsDialog(tk.Toplevel):
                     self.azure_deployment_var = tk.StringVar(value=current_config.get('azure_deployment', ''))
                 if not hasattr(self, 'azure_key_var'):
                     self.azure_key_var = tk.StringVar(value=current_config.get('azure_api_key', ''))
+            elif provider_id == 'ollama':
+                # Ollama needs special handling
+                if not hasattr(self, 'ollama_endpoint_var'):
+                    self.ollama_endpoint_var = tk.StringVar(value=current_config.get('ollama_endpoint', 'http://localhost:11434'))
+                if not hasattr(self, 'ollama_model_var'):
+                    self.ollama_model_var = tk.StringVar(value=current_config.get('ollama_model', 'llama2'))
+                if not hasattr(self, 'ollama_status_var'):
+                    self.ollama_status_var = tk.StringVar(value="")
             else:
                 # Create key and model vars for other providers
                 key_var_name = f'{provider_id}_key_var'
@@ -417,6 +425,28 @@ class SettingsDialog(tk.Toplevel):
             self.azure_key_var = tk.StringVar(value=self.current_config.get('azure_api_key', ''))
             ttk.Entry(self.api_keys_frame, textvariable=self.azure_key_var, width=50, show="*", style='Settings.TEntry').grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5)
             row += 1
+        elif selected_provider == 'ollama':
+            # Ollama endpoint and model
+            ttk.Label(self.api_keys_frame, text="Ollama Endpoint:", style='Settings.CardText.TLabel').grid(row=row, column=0, sticky=tk.W, pady=5)
+            
+            endpoint_frame = ttk.Frame(self.api_keys_frame, style='Settings.Card.TFrame')
+            endpoint_frame.grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5)
+            endpoint_frame.columnconfigure(0, weight=1)
+            
+            ttk.Entry(endpoint_frame, textvariable=self.ollama_endpoint_var, width=35, style='Settings.TEntry').grid(row=0, column=0, sticky=(tk.W, tk.E), padx=(0, 5))
+            ttk.Button(endpoint_frame, text="Test Connection", command=self.test_ollama_connection, style='Settings.TButton').grid(row=0, column=1)
+            row += 1
+            
+            ttk.Label(self.api_keys_frame, textvariable=self.ollama_status_var, style='Settings.Help.TLabel').grid(row=row, column=1, sticky=tk.W, pady=2)
+            row += 1
+            
+            ttk.Label(self.api_keys_frame, text="Model:", style='Settings.CardText.TLabel').grid(row=row, column=0, sticky=tk.W, pady=5)
+            ollama_models = AIClient.get_ollama_models(self.ollama_endpoint_var.get())
+            if not ollama_models:
+                ollama_models = ['llama2', 'llama3', 'mistral', 'phi3']
+            self.ollama_model_combo = ttk.Combobox(self.api_keys_frame, textvariable=self.ollama_model_var, values=ollama_models, width=47)
+            self.ollama_model_combo.grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5)
+            row += 1
         else:
             # Standard API key for other providers
             provider_name = self.providers[selected_provider]['name']
@@ -454,13 +484,43 @@ class SettingsDialog(tk.Toplevel):
             'openai': "Get your OpenAI API key from: https://platform.openai.com/api-keys",
             'azure': "Azure endpoint format: https://your-resource.openai.azure.com/",
             'gemini': "Get your Google AI API key from: https://makersuite.google.com/app/apikey",
-            'anthropic': "Get your Anthropic API key from: https://console.anthropic.com/"
+            'anthropic': "Get your Anthropic API key from: https://console.anthropic.com/",
+            'ollama': "Ollama runs locally. No API key needed! Install from: https://ollama.com\nPull models with: ollama pull llama2"
         }
         return help_texts.get(provider, "")
     
     def on_provider_change(self):
         """Called when provider selection changes"""
         self.create_api_key_fields()
+    
+    def test_ollama_connection(self):
+        """Test connection to Ollama server"""
+        endpoint = self.ollama_endpoint_var.get().strip()
+        if not endpoint:
+            endpoint = 'http://localhost:11434'
+            self.ollama_endpoint_var.set(endpoint)
+        self.ollama_status_var.set("Testing connection...")
+        self.update_idletasks()
+        def test_thread():
+            result = AIClient.test_ollama_connection(endpoint)
+            self.after(0, lambda: self._update_ollama_status(result))
+        thread = threading.Thread(target=test_thread, daemon=True)
+        thread.start()
+    
+    def _update_ollama_status(self, result):
+        """Update Ollama connection status"""
+        if result['success']:
+            models = result.get('models', [])
+            if models:
+                self.ollama_status_var.set(f"✓ {result['message']}")
+                if hasattr(self, 'ollama_model_combo'):
+                    self.ollama_model_combo['values'] = models
+                    if self.ollama_model_var.get() not in models and models:
+                        self.ollama_model_var.set(models[0])
+            else:
+                self.ollama_status_var.set("⚠ " + result['message'])
+        else:
+            self.ollama_status_var.set("✗ " + result['message'])
     
     def save_settings(self):
         """Save settings and close dialog"""
@@ -480,6 +540,10 @@ class SettingsDialog(tk.Toplevel):
                 self.result['azure_endpoint'] = self.azure_endpoint_var.get()
                 self.result['azure_deployment'] = self.azure_deployment_var.get()
                 self.result['azure_api_key'] = self.azure_key_var.get()
+            elif provider_id == 'ollama':
+                # Ollama has endpoint and model
+                self.result['ollama_endpoint'] = self.ollama_endpoint_var.get()
+                self.result['ollama_model'] = self.ollama_model_var.get()
             else:
                 # Save API key and model for each provider
                 key_var = getattr(self, f'{provider_id}_key_var', None)
@@ -571,6 +635,8 @@ class GarminChatApp:
         self.gemini_model = 'gemini-1.5-flash'
         self.anthropic_api_key = None
         self.anthropic_model = 'claude-sonnet-4-5-20250929'
+        self.ollama_endpoint = 'http://localhost:11434'
+        self.ollama_model = 'llama2'
         
         # Garmin settings
         self.garmin_email = None
@@ -623,6 +689,8 @@ class GarminChatApp:
                     self.gemini_model = config.get('gemini_model', 'gemini-1.5-flash')
                     self.anthropic_api_key = config.get('anthropic_api_key', '')
                     self.anthropic_model = config.get('anthropic_model', 'claude-sonnet-4-5-20250929')
+                    self.ollama_endpoint = config.get('ollama_endpoint', 'http://localhost:11434')
+                    self.ollama_model = config.get('ollama_model', 'llama2')
                     
                     # Auto-migrate deprecated model names
                     model_migrations = {
@@ -641,13 +709,13 @@ class GarminChatApp:
                     if self.gemini_model in model_migrations:
                         old_model = self.gemini_model
                         self.gemini_model = model_migrations[old_model]
-                        logger.info(f"Auto-migrated Gemini model: {old_model} â†’ {self.gemini_model}")
+                        logger.info(f"Auto-migrated Gemini model: {old_model} → {self.gemini_model}")
                     
                     # Migrate xAI model if deprecated
                     if self.xai_model in model_migrations:
                         old_model = self.xai_model
                         self.xai_model = model_migrations[old_model]
-                        logger.info(f"Auto-migrated xAI model: {old_model} â†’ {self.xai_model}")
+                        logger.info(f"Auto-migrated xAI model: {old_model} → {self.xai_model}")
                     
                     # Garmin settings
                     self.garmin_email = config.get('garmin_email', '')
@@ -731,6 +799,8 @@ class GarminChatApp:
                 'gemini_model': self.gemini_model,
                 'anthropic_api_key': self.anthropic_api_key or '',
                 'anthropic_model': self.anthropic_model,
+                'ollama_endpoint': self.ollama_endpoint,
+                'ollama_model': self.ollama_model,
                 # Garmin settings
                 'garmin_email': self.garmin_email,
                 'garmin_password': self.garmin_password,
@@ -1010,7 +1080,7 @@ class GarminChatApp:
         self.create_tooltip(search_btn, "Search chat history")
         
         theme_btn = ttk.Button(button_container,
-                              text="◐",
+                              text="◐",
                               command=self.toggle_theme,
                               style='Modern.TButton',
                               width=3)
@@ -1092,7 +1162,7 @@ class GarminChatApp:
         
         # Status label
         self.status_label = ttk.Label(control_card,
-                                     text="âšª  Not connected",
+                                     text="⚠  Not connected",
                                      style='Status.TLabel')
         self.status_label.grid(row=1, column=0, columnspan=7, sticky=tk.W, pady=(10, 0))
         
@@ -1103,7 +1173,7 @@ class GarminChatApp:
         # Row 2: MFA card (initially hidden) - moved up from row 4
         # Row 2: MFA card (initially hidden) - moved up from row 4
         self.mfa_frame = ttk.LabelFrame(main_frame, 
-                                       text="🔐 Multi-Factor Authentication", 
+                                       text="ðŸ” Multi-Factor Authentication", 
                                        style='Card.TLabelframe',
                                        padding="20")
         self.mfa_frame.grid(row=2, column=0, sticky=(tk.W, tk.E), pady=(0, 15))
@@ -1202,7 +1272,7 @@ class GarminChatApp:
         
         # Helper text
         helper_text = ttk.Label(input_card,
-                               text="Ctrl+Enter to send  •  Enter for new line",
+                               text="Ctrl+Enter to send  ⏎  Enter for new line",
                                foreground=self.colors['text_secondary'],
                                background=self.colors['card_bg'],
                                font=('Segoe UI', 8))
@@ -1245,12 +1315,12 @@ class GarminChatApp:
         if isinstance(message, bytes):
             message = message.decode('utf-8', errors='replace')
         
-        # Clean up any corrupted bullet points in the message
-        message = message.replace('â€¢', '•')  # Fix corrupted bullets
-        message = message.replace('â€"', '—')  # Fix em dash
-        message = message.replace('â€™', "'")  # Fix apostrophe
-        message = message.replace('â€œ', '"')  # Fix opening quote
-        message = message.replace('â€', '"')   # Fix closing quote
+        # Clean up mojibake characters in AI responses
+        message = message.replace('\u2022', '\u2022')  # Bullets
+        message = message.replace('\u2014', '\u2014')  # Em dash
+        message = message.replace('\u2019', "'")  # Apostrophe
+        message = message.replace('\u201c', '"')  # Left quote
+        message = message.replace('\u201d', '"')  # Right quote
         
         # Add timestamp
         timestamp = datetime.now().strftime("%H:%M")
@@ -1383,6 +1453,8 @@ class GarminChatApp:
             'gemini_model': self.gemini_model,
             'anthropic_api_key': self.anthropic_api_key or '',
             'anthropic_model': self.anthropic_model,
+            'ollama_endpoint': self.ollama_endpoint,
+            'ollama_model': self.ollama_model,
             'garmin_email': self.garmin_email or '',
             'garmin_password': self.garmin_password or ''
         }
@@ -1406,6 +1478,8 @@ class GarminChatApp:
             self.gemini_model = dialog.result.get('gemini_model', 'gemini-1.5-flash')
             self.anthropic_api_key = dialog.result.get('anthropic_api_key', '')
             self.anthropic_model = dialog.result.get('anthropic_model', 'claude-sonnet-4-5-20250929')
+            self.ollama_endpoint = dialog.result.get('ollama_endpoint', 'http://localhost:11434')
+            self.ollama_model = dialog.result.get('ollama_model', 'llama2')
             
             # Update Garmin credentials
             self.garmin_email = dialog.result.get('garmin_email', '')
@@ -1422,7 +1496,8 @@ class GarminChatApp:
                         'openai': 'OpenAI (ChatGPT)',
                         'azure': 'Azure OpenAI',
                         'gemini': 'Google Gemini',
-                        'anthropic': 'Anthropic (Claude)'
+                        'anthropic': 'Anthropic (Claude)',
+                        'ollama': 'Ollama (Local)'
                     }
                     provider_name = provider_names.get(self.ai_provider, self.ai_provider)
                     self.add_message("System", f"Settings updated! Now using: {provider_name}", 'system')
@@ -1468,6 +1543,17 @@ class GarminChatApp:
                 self.ai_client = AIClient(provider='anthropic', api_key=self.anthropic_api_key, model=self.anthropic_model)
                 logger.info(f"AI client initialized: Anthropic ({self.anthropic_model})")
                 return True
+                
+            elif provider == 'ollama':
+                from ai_client import AIClient
+                self.ai_client = AIClient(
+                    provider='ollama',
+                    api_key='ollama',
+                    model=self.ollama_model,
+                    ollama_endpoint=self.ollama_endpoint
+                )
+                logger.info(f"AI client initialized: Ollama ({self.ollama_model}) at {self.ollama_endpoint}")
+                return True
             else:
                 logger.warning(f"No valid API key for provider: {provider}")
                 return False
@@ -1489,6 +1575,8 @@ class GarminChatApp:
             return self.gemini_api_key
         elif provider == 'anthropic':
             return self.anthropic_api_key
+        elif provider == 'ollama':
+            return 'ollama'
         return None
     
     def connect_to_garmin(self):
@@ -1548,17 +1636,17 @@ class GarminChatApp:
                 self.root.after(0, lambda: self._show_mfa_input())
             else:
                 error_msg = result.get('error', 'Unknown error')
-                self.root.after(0, lambda: self.update_status(f"❌ {error_msg}", True))
+                self.root.after(0, lambda: self.update_status(f"âŒ {error_msg}", True))
                 self.root.after(0, lambda: self.connect_btn.config(state=tk.NORMAL))
                 
         except Exception as e:
-            self.root.after(0, lambda: self.update_status(f"❌ Error: {str(e)}", True))
+            self.root.after(0, lambda: self.update_status(f"âŒ Error: {str(e)}", True))
             self.root.after(0, lambda: self.connect_btn.config(state=tk.NORMAL))
             
     def _show_mfa_input(self):
         """Show MFA input frame"""
         self.mfa_frame.grid()
-        self.update_status("🔐 MFA Required: Enter your 6-digit code", False)
+        self.update_status("ðŸ” MFA Required: Enter your 6-digit code", False)
         self.mfa_entry.focus()
         
     def submit_mfa(self):
@@ -1566,7 +1654,7 @@ class GarminChatApp:
         mfa_code = self.mfa_entry.get().strip()
         
         if not mfa_code or len(mfa_code) != 6:
-            self.update_status("❌ Please enter a valid 6-digit MFA code", True)
+            self.update_status("âŒ Please enter a valid 6-digit MFA code", True)
             return
             
         self.mfa_btn.config(state=tk.DISABLED)
@@ -1589,11 +1677,11 @@ class GarminChatApp:
                 self.root.after(0, lambda: self.mfa_frame.grid_remove())
             else:
                 error_msg = result.get('error', 'Unknown error')
-                self.root.after(0, lambda: self.update_status(f"❌ {error_msg}", True))
+                self.root.after(0, lambda: self.update_status(f"âŒ {error_msg}", True))
                 self.root.after(0, lambda: self.mfa_btn.config(state=tk.NORMAL))
                 
         except Exception as e:
-            self.root.after(0, lambda: self.update_status(f"❌ Error: {str(e)}", True))
+            self.root.after(0, lambda: self.update_status(f"âŒ Error: {str(e)}", True))
             self.root.after(0, lambda: self.mfa_btn.config(state=tk.NORMAL))
             
     def _on_auth_success(self):
@@ -1619,7 +1707,7 @@ class GarminChatApp:
     def send_message(self):
         """Send a message to the chatbot"""
         if not self.authenticated:
-            self.update_status("❌ Please connect to Garmin first", True)
+            self.update_status("âŒ Please connect to Garmin first", True)
             return
             
         # Get message from Text widget
@@ -1849,7 +1937,7 @@ class GarminChatApp:
     def use_example(self, question):
         """Use an example question"""
         if not self.authenticated:
-            self.update_status("❌ Please connect to Garmin first", True)
+            self.update_status("âŒ Please connect to Garmin first", True)
             return
             
         self.message_entry.delete("1.0", tk.END)
@@ -1919,12 +2007,12 @@ class GarminChatApp:
                 self.mfa_required = True
                 self.authenticated = False
                 self.root.after(0, lambda: self._show_mfa_input())
-                self.root.after(0, lambda: self.update_status("🔐 MFA Required: Enter your 6-digit code", False))
+                self.root.after(0, lambda: self.update_status("ðŸ” MFA Required: Enter your 6-digit code", False))
             else:
                 error_msg = result.get('error', 'Unknown error')
-                self.root.after(0, lambda: self.update_status(f"❌ {error_msg}", True))
+                self.root.after(0, lambda: self.update_status(f"âŒ {error_msg}", True))
         except Exception as e:
-            self.root.after(0, lambda: self.update_status(f"❌ Error: {str(e)}", True))
+            self.root.after(0, lambda: self.update_status(f"âŒ Error: {str(e)}", True))
         finally:
             self.root.after(0, lambda: self.refresh_btn.config(state=tk.NORMAL))
             
@@ -2356,7 +2444,7 @@ class GarminChatApp:
             suggestions.append("Check your heart rate trends")
         
         if suggestions:
-            suggestion_text = "Ὂ1 " + " • ".join(suggestions[:2])
+            suggestion_text = "á½Š1 " + " ⏎ ".join(suggestions[:2])
             self.suggestions_label.config(text=suggestion_text)
         else:
             self.suggestions_frame.grid_remove()
@@ -3549,7 +3637,7 @@ class ChatHistoryViewer(tk.Toplevel):
         dialog.rowconfigure(0, weight=1)
         frame.columnconfigure(1, weight=1)
         
-        ttk.Label(frame, text="âœï¸ Rename Chat Session", 
+        ttk.Label(frame, text="Ã¢Å“ÂÃ¯Â¸Â Rename Chat Session", 
                  font=('Segoe UI', 12, 'bold')).grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(0, 15))
         
         ttk.Label(frame, text="New Name:", 
