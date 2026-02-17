@@ -1,63 +1,29 @@
-# Garmin Chat Desktop v4.0.3 - Python Requirements
-# =====================================================
-# Install all dependencies: pip install -r requirements.txt
+# Garmin Chat Desktop v4.1.0 Dependencies
 
-# Core Dependencies
-# -----------------
-# Garmin Connect API
-garminconnect>=0.2.0
+# Core Application
+garth==0.4.46              # Garmin Connect API wrapper
+tk==0.1.0                  # Tkinter (usually included with Python)
 
-# HTTP requests
-requests>=2.31.0
+# AI Providers
+openai==1.58.1             # OpenAI, xAI, Azure OpenAI, and Ollama (OpenAI-compatible)
+anthropic==0.39.0          # Anthropic Claude API
+google-genai==0.3.0        # Google Gemini (new SDK)
+requests==2.32.3           # HTTP library for Ollama API calls
 
-# GUI - Tkinter (usually included with Python, but listed for reference)
-# Note: On some Linux systems, install python3-tk separately
+# Document Generation
+python-docx==1.1.2         # Word document creation
+reportlab==4.2.5           # PDF generation
+Pillow==11.0.0             # Image processing
 
-# Image handling for splash screen and logo
-Pillow>=10.0.0
+# UI and Utilities
+ttkthemes==3.2.2           # Additional ttk themes (optional)
 
+# Build Tools (Development only)
+pyinstaller==6.11.1        # Create executable
+Pillow==11.0.0             # Required for PyInstaller to handle images
 
-# AI Provider SDKs
-# ----------------
-# xAI (Grok) - uses OpenAI-compatible API
-openai>=1.0.0
+# Optional: For future voice features (commented out for now)
+# azure-cognitiveservices-speech==1.40.0  # Voice input (future)
 
-# Google Gemini - NEW package (replaces deprecated google-generativeai)
-google-genai>=0.2.0
-
-# Anthropic (Claude)
-anthropic>=0.18.0
-
-
-# Build/Packaging Tools (Development only)
-# -----------------------------------------
-# PyInstaller for creating executable
-pyinstaller>=6.0.0
-
-
-# Optional Dependencies
-# ---------------------
-# For PDF export functionality (optional)
-# reportlab>=4.0.0
-
-# For Word document export (optional)
-# python-docx>=1.0.0
-
-
-# Notes
-# -----
-# 1. Python 3.8+ required
-# 2. Windows 10+ recommended for desktop app
-# 3. OpenAI package is used for both xAI and OpenAI providers
-# 4. Azure OpenAI uses the openai package with azure_endpoint parameter
-# 5. google-genai replaces the deprecated google-generativeai package
-# 6. Tkinter is usually included with Python on Windows/Mac
-#    - On Linux: sudo apt-get install python3-tk (Debian/Ubuntu)
-#    - On Linux: sudo dnf install python3-tkinter (Fedora/RHEL)
-
-# Migration from v4.0.2 or earlier:
-# ----------------------------------
-# If you had google-generativeai installed, uninstall it first:
-#   pip uninstall google-generativeai
-# Then install the new requirements:
-#   pip install -r requirements.txt
+# Note: Some packages like tkinter come with Python
+# Note: garth may need to be installed from git if not on PyPI
