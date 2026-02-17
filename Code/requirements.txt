@@ -8,19 +8,19 @@ tk==0.1.0                  # Tkinter (usually included with Python)
 openai==1.58.1             # OpenAI, xAI, Azure OpenAI, and Ollama (OpenAI-compatible)
 anthropic==0.39.0          # Anthropic Claude API
 google-genai==0.3.0        # Google Gemini (new SDK)
-requests==2.32.3           # HTTP library for Ollama API calls
+requests==2.32.4           # HTTP library for Ollama API calls
 
 # Document Generation
 python-docx==1.1.2         # Word document creation
 reportlab==4.2.5           # PDF generation
-Pillow==11.0.0             # Image processing
+Pillow==12.1.1             # Image processing
 
 # UI and Utilities
 ttkthemes==3.2.2           # Additional ttk themes (optional)
 
 # Build Tools (Development only)
 pyinstaller==6.11.1        # Create executable
-Pillow==11.0.0             # Required for PyInstaller to handle images
+Pillow==12.1.1             # Required for PyInstaller to handle images
 
 # Optional: For future voice features (commented out for now)
 # azure-cognitiveservices-speech==1.40.0  # Voice input (future)
