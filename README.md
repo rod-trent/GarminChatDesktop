@@ -115,7 +115,7 @@ For free, unlimited AI with complete privacy:
    - Choose your model
    - Save
 
-See the complete [Ollama Setup Guide](OLLAMA_SETUP_GUIDE.md) for detailed instructions.
+See the complete [Ollama Setup Guide](https://github.com/rod-trent/GarminChatDesktop/blob/main/Code/OLLAMA_SETUP_GUIDE.md) for detailed instructions.
 
 ## Cost Comparison
 
@@ -203,7 +203,7 @@ Toggle between light and dark themes for comfortable viewing any time of day.
 - Check that your Garmin device has synced recently
 
 ### Ollama Issues
-See the detailed [Ollama Setup Guide](OLLAMA_SETUP_GUIDE.md) for troubleshooting.
+See the detailed [Ollama Setup Guide](https://github.com/rod-trent/GarminChatDesktop/blob/main/Code/OLLAMA_SETUP_GUIDE.md) for troubleshooting.
 
 ## Privacy & Data Security
 
