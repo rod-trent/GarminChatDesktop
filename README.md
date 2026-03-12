@@ -1,6 +1,6 @@
 # Garmin Chat Desktop
 
-**Garmin Chat Desktop v4.0.3**
+**Garmin Chat Desktop v4.0.4**
 
 <div align="center">
 
@@ -11,406 +11,292 @@
 
 </div>
 
-**AI-Powered Insights for Your Garmin Connect Data**
 
-Garmin Chat Desktop is a local desktop chatbot that lets you interact with your Garmin Connect data using natural language. Ask questions about your workouts, sleep, steps, and activities in plain English and get intelligent AI-powered responses.
+**AI-Powered Insights for Your Garmin Connect Fitness Data**
 
-<div align="center">
+Garmin Chat Desktop is a Windows application that lets you interact with your Garmin Connect fitness data through natural language conversations. Ask questions, analyze trends, and get personalized insights using the power of AI.
 
-[Download Latest](https://github.com/rod-trent/GarminChatDesktop/tree/main/Releases) • [Features](#-features) • [Installation](#-installation)
+## What's New in v4.0.4
 
-![Garmin Chat Desktop](https://github.com/rod-trent/GarminChatDesktop/blob/main/AppImages/GarminChatDesktop.jpg?raw=true "Dark Mode Engaged")
+### Ollama Support - Free, Local AI!
+Run AI models completely free on your own computer with Ollama integration. No API costs, complete privacy, works offline!
 
-</div>
+- **$0 Cost** - Unlimited usage with no subscription fees
+- **100% Private** - Your fitness data never leaves your computer
+- **Works Offline** - No internet connection needed after setup
+- **Multiple Models** - Choose from Llama, Mistral, Phi, and more
+- **Easy Setup** - Simple installation from ollama.com
 
----
+See [OLLAMA_SETUP_GUIDE.md](OLLAMA_SETUP_GUIDE.md) for installation instructions.
 
-## 🎯 Features
+### Latest Anthropic Claude Models
+Updated to include the newest Claude models for improved response quality and reasoning.
 
-### Core Functionality
-- **Natural Language Queries** - Ask questions in plain English
-- **Multi-AI Provider Support** - Choose from xAI (Grok), OpenAI (ChatGPT), Google Gemini, Anthropic (Claude), or Azure OpenAI
-- **Comprehensive Data Access** - Steps, workouts, sleep, heart rate, stress, body battery, nutrition, and more
-- **Chat History** - Save and review past conversations
-- **Export Reports** - Export conversations as PDF, DOCX, or TXT
+### Richer Garmin Data (50 Activities)
+The app now pulls your 50 most recent activities from Garmin Connect (previously limited to 10), giving the AI much more context for trend analysis and training insights.
 
-### New in v4.0.3
-- ✨ **Customizable Quick Questions** - Create your own frequently-asked questions
-- 🎨 **Rounded Hover Effects** - Modern, polished button styling
-- 🪟 **Smooth Dialog Animations** - No more flashing windows
-- 🔤 **Perfect Text Rendering** - All character encoding issues fixed
-- 🚀 **Professional Splash Screen** - Beautiful startup experience
-- 🎯 **Enhanced UI** - Fluent Design throughout all dialogs
+> **Note:** Because more data is being retrieved, the initial Garmin Connect login and subsequent AI responses may take slightly longer than in previous versions. This is expected behavior.
 
-### Previous Features
-- 💾 **Saved Prompts** - Save and reuse your favorite questions
-- 🔍 **Search History** - Find past conversations quickly
-- 🌓 **Dark Mode** - Easy on the eyes
-- 📊 **Markdown Formatting** - Clean, readable responses
-- 🔐 **Local & Secure** - All data stays on your computer
+## Features
 
----
+### 💬 Natural Language Queries
+Ask questions about your fitness data in plain English:
+- "What was my last workout?"
+- "Show me my running pace trend over the last month"
+- "How many calories did I burn this week?"
+- "What's my average heart rate during runs?"
 
-## 📋 Requirements
+### 🤖 Multiple AI Providers
+Choose from six AI providers to suit your needs and budget:
+- **Ollama (Local)** - NEW! Free, private, offline
+- **xAI (Grok)** - Fast, advanced reasoning
+- **OpenAI (ChatGPT)** - Industry-leading performance
+- **Google Gemini** - Excellent for data analysis
+- **Anthropic (Claude)** - Superior context understanding
+- **Azure OpenAI** - Enterprise-grade deployment
 
-### System Requirements
-- **OS**: Windows 10 or later (64-bit)
-- **RAM**: 4GB minimum, 8GB recommended
-- **Storage**: 200MB free space
-- **Internet**: Required for AI API calls and Garmin Connect sync
+### 📊 Rich Data Analysis
+- Activity summaries and detailed metrics
+- Training load and recovery insights
+- Sleep analysis and trends
+- Heart rate zones and patterns
+- Step counts and daily activity
+- Weight and body composition tracking
 
-### Account Requirements
-- **Garmin Connect Account** - Free account from [Garmin Connect](https://connect.garmin.com)
-- **AI API Key** - At least one of:
-  - [xAI (Grok)](https://console.x.ai/) - Recommended for cost-effectiveness
-  - [OpenAI (ChatGPT)](https://platform.openai.com/)
-  - [Google Gemini](https://makersuite.google.com/app/apikey)
-  - [Anthropic (Claude)](https://console.anthropic.com/)
-  - Azure OpenAI (requires Azure subscription)
+### 🎨 Modern Interface
+- Clean, intuitive Fluent Design UI
+- Dark mode support
+- Conversation history with search
+- Save and organize chat sessions
+- Export conversations as PDF, DOCX, or TXT
 
----
+### 🔒 Privacy & Security
+- All data processing happens locally on your machine
+- API keys stored securely on your device
+- With Ollama, data never leaves your computer at all
+- No third-party tracking or analytics
 
-## 🚀 Installation
+## System Requirements
 
-### Installer (Recommended)
-1. Download `GarminChatDesktop_v4.0.3_Setup.exe`
+- **OS**: Windows 10 or Windows 11
+- **RAM**: 4GB minimum (8GB+ recommended for Ollama)
+- **Storage**: 200MB for application + 2-40GB for Ollama models (optional)
+- **Internet**: Required for cloud AI providers, optional with Ollama
+
+## Installation
+
+### Quick Install
+1. Download `GarminChatSetup.exe` from the [Releases](../../releases) page
 2. Run the installer
 3. Follow the setup wizard
-4. Launch from Start Menu or Desktop shortcut
+4. Launch Garmin Chat Desktop from your Start menu
 
----
+### First-Time Setup
+1. Enter your Garmin Connect credentials
+2. Choose your AI provider:
+   - **For Free/Offline**: Select Ollama (requires separate installation)
+   - **For Cloud AI**: Select a provider and enter your API key
+3. Click "Connect to Garmin"
+4. Start chatting with your fitness data!
 
-## 🎮 Getting Started
+## Ollama Setup (Optional but Recommended)
 
-### First Time Setup
+For free, unlimited AI with complete privacy:
 
-1. **Launch the Application**
-   - The app will open and prompt for configuration
+1. **Install Ollama** from https://ollama.com/download
+2. **Pull a model**:
+   ```bash
+   ollama pull llama2
+   ```
+3. **Configure Garmin Chat**:
+   - Open Settings
+   - Select "Ollama (Local)" as your AI provider
+   - Click "Test Connection"
+   - Choose your model
+   - Save
 
-2. **Configure Settings**
-   - Click the **Settings** button
-   - Enter your **Garmin Connect** email and password
-   - Choose an **AI Provider** and enter your API key
-   - Click **Save**
+See the complete [Ollama Setup Guide](OLLAMA_SETUP_GUIDE.md) for detailed instructions.
 
-3. **Connect to Garmin**
-   - Click **▶ Connect to Garmin**
-   - Wait for authentication (may require MFA if enabled)
-   - Once connected, you're ready to chat!
+## Cost Comparison
 
-### Basic Usage
+### Traditional AI Subscriptions
+- ChatGPT Plus: **$20/month**
+- Claude Pro: **$20/month**
+- Gemini Advanced: **$20/month**
 
-**Quick Questions:**
-- Click any Quick Question button to instantly ask
-- Customize them: Click **⚙️ Customize** to create your own
+### Garmin Chat Desktop
+- **With Ollama**: **$0** (free forever)
+- **With pay-per-use APIs**: Typically **$1-5/month** for casual use
+- **Savings**: Up to **$240/year** compared to subscriptions!
 
-**Ask Anything:**
-- Type your question in the input box
-- Press `Ctrl+Enter` to send (or click **Send →**)
-- Examples:
-  - "How many steps did I take today?"
-  - "What was my last workout?"
-  - "How did I sleep last night?"
-  - "Show me my activities from last week"
+## Usage Examples
 
-**Advanced Queries:**
-- "Compare my last 3 runs"
-- "How's my body battery trending?"
-- "What's my average sleep duration this month?"
-- "Show me all strength training from February"
+### Basic Queries
+```
+You: What was my last workout?
+Garmin Chat: Your last workout was a Treadmill Running session on 
+February 16, 2026 at 6:20 PM. You ran 3.25 km in 19 minutes, burning 
+202 calories at an average pace of 5:51 min/km.
+```
 
----
+### Trend Analysis
+```
+You: How has my average running pace changed over the last 3 months?
+Garmin Chat: Your running pace has improved significantly! In November, 
+your average pace was 6:15 min/km. By January, it improved to 5:45 min/km, 
+and this month you're averaging 5:30 min/km - that's a 12% improvement!
+```
 
-## ⚙️ Settings & Configuration
+### Training Insights
+```
+You: Am I overtraining?
+Garmin Chat: Based on your recent activity, you're managing your training 
+load well. Your 7-day training load is 245, which is in the optimal range. 
+However, your recovery time shows you need 48 hours rest after yesterday's 
+long run. Consider a rest day or light activity tomorrow.
+```
 
-### AI Provider Selection
+## Supported AI Providers
 
-Choose the AI provider that best fits your needs:
+| Provider | Speed | Quality | Cost | Best For |
+|----------|-------|---------|------|----------|
+| **Ollama** | Medium | Good | **Free** | Privacy, offline use, unlimited queries |
+| **xAI (Grok)** | Very Fast | Excellent | Pay-per-use | Quick responses, latest data |
+| **OpenAI** | Fast | Excellent | Pay-per-use | Balanced performance |
+| **Gemini** | Fast | Very Good | Pay-per-use | Data analysis |
+| **Claude** | Medium | Excellent | Pay-per-use | Detailed explanations |
+| **Azure** | Fast | Excellent | Enterprise | Business deployments |
 
-| Provider | Best For | Cost | Model |
-|----------|----------|------|-------|
-| **xAI (Grok)** | Best value, great quality | Low | grok-3 |
-| **OpenAI** | Most popular, reliable | Medium | gpt-4o |
-| **Gemini** | Fast responses | Low | gemini-1.5-flash |
-| **Anthropic** | Long conversations | Medium | claude-sonnet-4-5 |
-| **Azure** | Enterprise users | Variable | Your deployment |
+## Features Guide
 
-💡 **Tip**: Start with xAI (Grok) for the best cost-to-quality ratio!
+### Conversation Management
+- **Save Chats**: Name and save important conversations
+- **History**: Browse and search past chats
+- **Export**: Download conversations as PDF, Word, or text files
 
-### Garmin Credentials
+### Data Refresh
+- Click "Refresh" to get the latest data from Garmin Connect
+- Automatic connection on startup (can be disabled)
+- Real-time sync with your Garmin account
 
-- **Email**: Your Garmin Connect email
-- **Password**: Your Garmin Connect password
-- **MFA**: If enabled, you'll be prompted for your 6-digit code
-
-🔒 **Security**: Credentials are stored locally in `~/.garmin_chat/config.json`
-
-### Quick Questions Customization
-
-1. Click **⚙️ Customize** next to Quick Questions
-2. Edit the questions (one per line, max 8)
-3. Click **💾 Save**
-4. Questions update instantly!
-
----
-
-## 🎨 Features Guide
-
-### Chat History
-- **Save Chat**: Click **💾 Save Chat** to save the current conversation
-- **View History**: Click **📂 History** to browse saved chats
-- **Load Chat**: Select a saved chat and click **Load Into Chat**
-- **Rename**: Click **✏️ Rename** to give chats custom names
-- **Delete**: Remove unwanted conversations
-
-### Saved Prompts
-- Click **📝 Prompts** to manage saved questions
-- Click **➕ New Prompt** to save a frequently-asked question
-- Click **✏️ Use Selected** to insert into chat
-
-### Search
-- Click **🔍 Search** to find past conversations
-- Search across all saved chat history
-- View matching results instantly
-
-### Export Reports
-- Click **📄 Export Report** to save conversations
-- Choose format: **PDF**, **Word (.docx)**, or **Text (.txt)**
-- Include/exclude timestamps and system messages
+### Quick Questions
+Customize quick question buttons for one-tap access to your most common queries.
 
 ### Dark Mode
-- Click **◐ Theme** to toggle dark/light mode
-- Preference is saved automatically
-- Easy on the eyes for night use
+Toggle between light and dark themes for comfortable viewing any time of day.
 
----
+## Troubleshooting
 
-## 📊 Data You Can Query
+### "Cannot connect to Garmin"
+- Verify your email and password are correct
+- Check your internet connection
+- If using 2FA, enter the code when prompted
 
-### Activity Data
-- Steps, distance, calories
-- Workouts (running, cycling, swimming, etc.)
-- Activity summaries and details
-- Date range queries
+### "AI Provider Error"
+- **Cloud providers**: Verify your API key is valid
+- **Ollama**: Make sure Ollama is running (`ollama serve`)
+- Check Settings to ensure the correct provider is selected
 
-### Health Metrics
-- Sleep duration and quality
-- Heart rate (resting, max, zones)
-- Body Battery energy levels
-- Stress levels
-- Respiration rate
-- SpO2 (blood oxygen)
-- HRV (heart rate variability)
+### "No data available"
+- Click "Refresh" to sync latest data from Garmin
+- Ensure you have activities recorded in Garmin Connect
+- Check that your Garmin device has synced recently
 
-### Nutrition & Wellness
-- Hydration tracking
-- Nutrition/food logs
-- Floors climbed
-- Intensity minutes
-- Training load and status
-- VO2 max and fitness age
+### Ollama Issues
+See the detailed [Ollama Setup Guide](OLLAMA_SETUP_GUIDE.md) for troubleshooting.
 
----
+## Privacy & Data Security
 
-## 💾 File Locations
+- **Local Storage**: All data is stored locally on your computer
+- **Encrypted Credentials**: Garmin passwords stored securely
+- **No Telemetry**: We don't collect usage data or analytics
+- **Ollama Option**: Keep everything 100% on your machine
 
-All data is stored in your user directory:
+## Building from Source
 
-```
-C:\Users\YourName\.garmin_chat\
-├── config.json              # Settings and credentials
-├── quick_questions.json     # Custom quick questions
-├── saved_prompts.json       # Saved prompts
-└── chat_history\            # Saved conversations
-    ├── chat_20260215_143022.json
-    ├── chat_20260214_091533_MyWorkout.json
-    └── ...
+Requirements:
+- Python 3.11+
+- Required packages: `pip install -r requirements.txt`
+
+Build executable:
+```bash
+pyinstaller GarminChatDesktop.spec
 ```
 
----
+Create installer:
+```bash
+iscc installer_script.iss
+```
 
-## 🐛 Troubleshooting
+## API Key Setup
 
-### Connection Issues
+### xAI (Grok)
+1. Visit https://console.x.ai/
+2. Create an account
+3. Generate an API key
+4. Paste into Garmin Chat settings
 
-**Problem**: "Failed to connect to Garmin"
-- **Solution**: 
-  - Verify email/password in Settings
-  - Check internet connection
-  - Try MFA if enabled
-  - Refresh and try again
+### OpenAI
+1. Visit https://platform.openai.com/api-keys
+2. Sign in or create an account
+3. Create a new API key
+4. Paste into Garmin Chat settings
 
-**Problem**: "MFA code required"
-- **Solution**:
-  - Enter your 6-digit code from authenticator app
-  - Code expires quickly - enter promptly
+### Google Gemini
+1. Visit https://makersuite.google.com/app/apikey
+2. Sign in with your Google account
+3. Create an API key
+4. Paste into Garmin Chat settings
 
-### API Issues
+### Anthropic (Claude)
+1. Visit https://console.anthropic.com/
+2. Create an account
+3. Generate an API key
+4. Paste into Garmin Chat settings
 
-**Problem**: "AI client initialization failed"
-- **Solution**:
-  - Verify API key in Settings
-  - Check key hasn't expired
-  - Ensure provider service is online
-  - Try a different provider
+### Ollama (No API Key Needed!)
+1. Install from https://ollama.com/download
+2. Run `ollama pull llama2`
+3. Select "Ollama" in Settings
+4. Click "Test Connection"
 
-**Problem**: "Rate limit exceeded"
-- **Solution**:
-  - Wait a few minutes
-  - Reduce query frequency
-  - Check your API quota
+## Support
 
-### Display Issues
+- **Issues**: Report bugs on [GitHub Issues](../../issues)
+- **Discussions**: Ask questions in [GitHub Discussions](../../discussions)
+- **Email**: [Your contact email]
 
-**Problem**: Text showing as boxes (□)
-- **Solution**: 
-  - Update to v4.0.3 (this is fixed!)
-  - All character encoding issues resolved
+## License
 
-**Problem**: Dialogs flashing when opening
-- **Solution**:
-  - Update to v4.0.3 (this is fixed!)
-  - Smooth animations implemented
+[Your chosen license]
 
----
+## Acknowledgments
 
-## 🔄 Updating
+- Garmin Connect for fitness data API
+- OpenAI, xAI, Google, Anthropic, and Ollama for AI capabilities
+- The open-source community for tools and libraries
 
-### From v4.0.x
-1. Download new installer or executable
-2. Run installer (will replace old version)
-3. Settings and data are preserved
+## Version History
 
-### From Earlier Versions
-1. Export any important chat history
-2. Install v4.0.3
-3. Reconfigure settings
-4. Import saved chats if needed
+### v4.0.4 (Current)
+- Added Ollama support for free, local AI
+- Added latest Anthropic Claude models
+- Expanded Garmin activity fetch from 10 to 50 activities for richer AI context
+- Fixed emoji encoding issues throughout UI
+- Improved error handling
 
----
+### v4.0.3
+- Updated for Google Gemini API changes
+- Bug fixes and stability improvements
 
-## 💡 Tips & Best Practices
-
-### Optimize AI Costs
-- Use xAI (Grok) for best value
-- Save frequently-used questions as Quick Questions
-- Use chat history instead of re-asking
-- Enable auto-login to save re-authentication queries
-
-### Better Queries
-- Be specific: "last 7 days" vs "recently"
-- Use date ranges for historical data
-- Ask follow-up questions in same chat
-- Save complex queries as prompts
-
-### Data Management
-- Save important conversations with custom names
-- Use Search to find old chats quickly
-- Export reports for offline reference
-- Delete old chats to save space
+### v4.0.0
+- 🎨 Modern Fluent Design UI
+- 🤖 Multi-provider AI support
+- 📊 Enhanced data visualization
+- 💾 Conversation history and export
 
 ---
 
-## 📝 Version History
+**Made with ❤️ for the Garmin fitness community**
 
-### v4.0.3 (February 15, 2026)
-- ✨ Added customizable Quick Questions
-- 🎨 Implemented rounded hover effects
-- 🪟 Fixed all dialog flashing issues
-- 🔤 Resolved all character encoding problems
-- 🚀 Added professional splash screen
-- 🎯 Enhanced all dialogs with Fluent Design
-- 📄 Added Export Report text label
-- 🌓 Improved dark mode consistency
-- 🔧 Developer Note: Migrated from deprecated google-generativeai to google-genai package
-
-### v4.0.1 (February 2026)
-- 🐛 Fixed window positioning bugs
-- 📚 Enhanced documentation
-- 🔧 Improved stability
-
-### v4.0.0 (January 2026)
-- 🆕 Initial public release
-- 🤖 Multi-AI provider support
-- 💾 Chat history and saved prompts
-- 🔍 Search functionality
-- 📊 Comprehensive Garmin data access
-
----
-
-## ❓ FAQ
-
-**Q: Is my data secure?**  
-A: Yes! All data stays local on your computer. API keys and credentials are stored in `~/.garmin_chat/config.json`.
-
-**Q: Which AI provider should I use?**  
-A: We recommend xAI (Grok) for the best cost-to-quality ratio. OpenAI is great if you already have credits.
-
-**Q: Can I use multiple Garmin accounts?**  
-A: Change credentials in Settings. Only one account can be active at a time.
-
-**Q: How much does it cost?**  
-A: The app is free! You only pay for AI API usage (typically $0.01-0.10 per conversation).
-
-**Q: Does it work offline?**  
-A: No, internet is required for Garmin Connect sync and AI API calls.
-
-**Q: Can I see my real-time heart rate?**  
-A: The app shows recent synced data from Garmin Connect, not live device data.
-
-**Q: What Garmin devices are supported?**  
-A: Any device that syncs with Garmin Connect (watches, bike computers, etc.).
-
-**Q: Can I customize the Quick Questions?**  
-A: Yes! Click **⚙️ Customize** next to Quick Questions to create your own.
-
----
-
-## 🤝 Support
-
-### Getting Help
-- **Issues**: Check Troubleshooting section above
-- **Questions**: See FAQ
-- **Bugs**: Report on GitHub Issues
-- **Feature Requests**: Submit on GitHub
-
-### Community
-- **GitHub**: [github.com/yourusername/garmin-chat](https://github.com/rod-trent/garminchatdesktop)
-- **Discussions**: [GitHub Discussions](https://github.com/rod-trent/GarminChatDesktop/discussions)
-- **Updates**: [Check Releases page](https://github.com/rod-trent/GarminChatDesktop/tree/main/Releases)
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE.txt](https://github.com/rod-trent/GarminChatDesktop/blob/main/LICENSE) file for details.
-
----
-
-## 🙏 Acknowledgments
-
-- **Garmin Connect** - For the excellent fitness platform
-- **AI Providers** - xAI, OpenAI, Google, Anthropic, Microsoft
-- **Python Community** - For amazing libraries
-- **Contributors** - Thank you to all who helped improve this project!
-
----
-
-## 🚀 What's Next?
-
-Future features we're considering:
-- 📈 Visual charts and graphs
-- 🗣️ Voice input/output
-- 📱 Mobile companion app
-- ☁️ Cloud sync (optional)
-- 🏆 Goal tracking and recommendations
-- 📧 Email reports
-
-**Feedback welcome!** Let us know what features you'd like to see.
-
----
-
-**Garmin Chat Desktop v4.0.3**  
-Made with ❤️ for fitness enthusiasts
-
-*Not affiliated with Garmin Ltd. All trademarks belong to their respective owners.*
+*Garmin Chat Desktop is not affiliated with or endorsed by Garmin Ltd.*
