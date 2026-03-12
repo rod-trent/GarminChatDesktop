@@ -4,7 +4,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-4.0.2-blue.svg)
+![Version](https://img.shields.io/badge/version-4.0.4-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
@@ -27,7 +27,7 @@ Run AI models completely free on your own computer with Ollama integration. No A
 - **Multiple Models** - Choose from Llama, Mistral, Phi, and more
 - **Easy Setup** - Simple installation from ollama.com
 
-See [OLLAMA_SETUP_GUIDE.md](OLLAMA_SETUP_GUIDE.md) for installation instructions.
+See [OLLAMA_SETUP_GUIDE.md](https://github.com/rod-trent/GarminChatDesktop/blob/main/Code/OLLAMA_SETUP_GUIDE.md) for installation instructions.
 
 ### Latest Anthropic Claude Models
 Updated to include the newest Claude models for improved response quality and reasoning.
