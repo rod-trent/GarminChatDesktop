@@ -16,7 +16,7 @@
 
 Garmin Chat Desktop is a Windows application that lets you interact with your Garmin Connect fitness data through natural language conversations. Ask questions, analyze trends, and get personalized insights using the power of AI.
 
-[Garmin Chat Desktop 4.0.4](https://github.com/rod-trent/GarminChatDesktop/blob/main/AppImages/gchatdesktop404.jpg)
+![Garmin Chat Desktop 4.0.4](https://github.com/rod-trent/GarminChatDesktop/blob/main/AppImages/gchatdesktop404.jpg)
 
 ## What's New in v4.0.4
 
