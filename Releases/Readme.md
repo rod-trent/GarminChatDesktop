@@ -2,195 +2,42 @@
 
 Official releases of Garmin Chat Desktop are published here.
 
-## Latest Release: v4.0.3 (February 15, 2026)
+# Garmin Chat Desktop v4.0.4 Release Notes
 
-### 🎉 What's New in v4.0.3
+**Release Date:** March 2026
 
-**Major Features:**
-- ⚙️ **Customizable Quick Questions** - Create up to 8 personalized quick questions
-- 🎨 **Rounded Hover Effects** - Modern, polished button styling
-- 🚀 **Professional Splash Screen** - Beautiful startup with logo and version
+## What's New
 
-**Bug Fixes:**
-- ✅ Fixed all character encoding issues (emojis, bullets, symbols)
-- 🪟 Fixed dialog window flashing on open
-- 🔤 Perfect text rendering throughout the app
-- 📝 Clean markdown formatting in AI responses
+### Ollama Support - Free, Local AI
+Run AI models completely free on your own computer with Ollama integration. No API costs, complete privacy, works offline!
 
-**Technical Updates:**
-- 📦 Migrated to new `google-genai` package (replaces deprecated `google-generativeai`)
-- 🔧 Enhanced error handling for all AI providers
-- 💾 Persistent custom quick questions storage
+- **$0 Cost** - Unlimited usage with no subscription fees
+- **100% Private** - Your fitness data never leaves your computer
+- **Works Offline** - No internet connection needed after setup
+- **Multiple Models** - Choose from Llama, Mistral, Phi, and more
+- **Easy Setup** - Simple installation from ollama.com
 
-### 📥 Download v4.0.3
+See [OLLAMA_SETUP_GUIDE.md](OLLAMA_SETUP_GUIDE.md) for installation and model recommendations.
 
-**Windows Installer (Recommended):**
-- [GarminChatDesktop_v4.0.3_Setup.exe](https://github.com/rod-trent/GarminChatDesktop/blob/main/Releases/GarminChatDesktop_v4.0.3_Setup.exe)
-- Size: ~60-80 MB
-- Includes uninstaller
-- Creates Start Menu shortcuts
+### Latest Anthropic Claude Models
+Updated to include the newest Claude models, delivering improved response quality, reasoning, and context handling for fitness data analysis.
 
-**Portable Version:**
-- [GarminChat.exe](https://github.com/rod-trent/GarminChatDesktop/blob/main/Releases/GarminChat.exe)
-- Size: ~50-70 MB
-- No installation required
-- Run from any location
+### Richer Garmin Data - 50 Activities
+The app now retrieves your 50 most recent activities from Garmin Connect (previously limited to 10). This gives the AI significantly more context for trend analysis, pace comparisons, and training load insights.
 
-**Source Code:**
-- [Source code)](https://github.com/rod-trent/GarminChatDesktop/tree/main/Code)
+> **Note:** The initial Garmin Connect login and AI prompt responses may take slightly longer than in previous versions. This is expected — the app is now fetching and processing 5x more activity data to give you better answers.
 
-### 📚 Documentation
-- [Complete README](https://github.com/rod-trent/GarminChatDesktop/blob/main/README.md)
-- [Installation Guide](https://github.com/rod-trent/GarminChatDesktop/blob/main/INSTALL.md)
-- [Changelog](https://github.com/rod-trent/GarminChatDesktop/blob/main/CHANGELOG.md)
-- [Release Notes](https://github.com/rod-trent/GarminChatDesktop/blob/main/RELEASE_NOTES_v4.0.3.md)
+## Bug Fixes
 
-### ⚠️ Important: Google Gemini Users
+- Fixed emoji and character encoding issues throughout the UI
+- Improved error handling for AI provider connection failures
 
-Google deprecated the `google-generativeai` package. If upgrading from v4.0.2 or earlier:
+## Upgrade Instructions
 
-```bash
-pip uninstall google-generativeai
-pip install google-genai
-```
+From v4.0.3: Just install the new version — all settings and API keys are preserved.
 
-**Note:** Gemini API is currently in beta. For production use, we recommend:
-- ⭐ **xAI (Grok)** - Most cost-effective and reliable
-- ⭐ **OpenAI** - Most popular and well-tested
-- ⭐ **Anthropic (Claude)** - Excellent for longer conversations
+## Downloads
 
----
+- **Installer**: `GarminChatSetup_v4.0.4.exe`
 
-## Previous Releases
-
-### v4.0.2 (February 2026)
-💾 Saved Prompts - Save and reuse your favorite questions
-🔍 Search History - Find past conversations quickly
-🌓 Dark Mode - Easy on the eyes
-📊 Markdown Formatting - Clean, readable responses
-🔐 Local & Secure - All data stays on your computer
-
-
-### v4.0.1 (February 2026)
-- 🐛 Fixed window positioning bugs
-- 📚 Enhanced documentation
-- 🔧 Improved stability
-
-[Download v4.0.1](https://github.com/rod-trent/GarminChatDesktop/releases/tag/v4.0.1)
-
-### v4.0.0 (January 2026)
-- 🆕 Initial public release
-- 🤖 Multi-AI provider support (xAI, OpenAI, Gemini, Anthropic, Azure)
-- 💬 Natural language fitness data queries
-- 📊 Comprehensive Garmin Connect data access
-- 💾 Chat history management
-- 🔍 Search functionality
-- 📄 Export reports (PDF, DOCX, TXT)
-- 🌓 Dark mode
-
-[Download v4.0.0](https://github.com/rod-trent/GarminChatDesktop/releases/tag/v4.0.0)
-
----
-
-## Installation
-
-### Windows Installer (Easiest)
-1. Download the installer
-2. Run the .exe file
-3. Follow the setup wizard
-4. Launch from Start Menu
-
-### Portable Version
-1. Download GarminChat.exe
-2. Place in any folder
-3. Double-click to run
-4. No installation needed!
-
----
-
-## System Requirements
-
-- **OS:** Windows 10 or later (64-bit)
-- **RAM:** 4GB minimum, 8GB recommended
-- **Storage:** 200MB free space
-- **Internet:** Required for AI API and Garmin Connect
-
----
-
-## Getting Started
-
-1. **Install** the application
-2. **Configure Settings:**
-   - Garmin Connect email and password
-   - AI provider and API key (xAI, OpenAI, Gemini, Anthropic, or Azure)
-3. **Connect** to Garmin
-4. **Start chatting** about your fitness data!
-
-Example questions:
-- "How many steps did I take today?"
-- "What was my last workout?"
-- "Show me my activities from last week"
-- "How's my sleep been this month?"
-
----
-
-## AI Provider Setup
-
-You'll need an API key from at least one provider:
-
-| Provider | Get API Key | Cost | Recommendation |
-|----------|-------------|------|----------------|
-| **xAI (Grok)** | [console.x.ai](https://console.x.ai/) | $ | ⭐ Best value |
-| **OpenAI** | [platform.openai.com](https://platform.openai.com/api-keys) | $$ | Most popular |
-| **Gemini** | [makersuite.google.com](https://makersuite.google.com/app/apikey) | $ | Beta - use with caution |
-| **Anthropic** | [console.anthropic.com](https://console.anthropic.com/) | $$ | Best for conversation |
-| **Azure OpenAI** | Azure Portal | $$$ | Enterprise |
-
-**Typical Cost:** $1-5 per month for regular use
-
----
-
-## Support
-
-- **Documentation:** [Blog](https://rodtrent.substack.com/s/garmin-chat-desktop)
-- **Issues:** [GitHub Issues](https://github.com/rod-trent/GarminChatDesktop/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/rod-trent/GarminChatDesktop/discussions)
-
----
-
-## What's Coming
-
-Future features under consideration:
-- 📈 Visual charts and graphs
-- 🗣️ Voice input/output
-- 📱 Mobile companion app
-- ☁️ Optional cloud sync
-- 🏆 Goal tracking and AI recommendations
-
----
-
-## Upgrading
-
-### From v4.0.x to v4.0.3
-- ✅ Settings and chat history are preserved
-- ✅ Just install - no configuration needed
-- ⚠️ If using Gemini: uninstall old package, install new one
-
-### From Earlier Versions
-- 💾 Export important chat history first
-- 📝 Note your API keys (optional backup)
-- ✅ Install v4.0.3
-- ⚙️ Reconfigure settings if needed
-
----
-
-## License
-
-MIT License - See [LICENSE.txt](https://github.com/rod-trent/GarminChatDesktop/blob/main/LICENSE.txt)
-
----
-
-
-**Made with ❤️ for fitness enthusiasts**
-
-*Not affiliated with Garmin Ltd. All trademarks are property of their respective owners.*
+**Full details**: See [README.md](README.md)
