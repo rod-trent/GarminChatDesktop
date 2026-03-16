@@ -1,3 +1,5 @@
+#BIG NEWS: [It's Official! Garmin Chat Connector: Talk to Your Garmin Data — From Any AI Chat App on Desktop or Mobile](https://rodtrent.substack.com/p/its-official-garmin-chat-connector)
+
 # Garmin Chat Desktop
 
 **Garmin Chat Desktop v4.0.4**
